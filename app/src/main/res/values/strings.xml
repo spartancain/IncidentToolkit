@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Incident Toolkit</string>
+    <string name="tvIncidentCreationPageTitle">Incident Creation</string>
+    <string name="IncidentName">Incident Name</string>
+    <string name="IncidentType">Incident Type</string>
+    <string name="IncidentLoc">Incident Location</string>
+    <string name="submitIncident">Submit Incident</string>
+    <string name="showIncidents">Show Incidents</string>
+    <string name="title_activity_main2">MainActivity2</string>
+</resources>
