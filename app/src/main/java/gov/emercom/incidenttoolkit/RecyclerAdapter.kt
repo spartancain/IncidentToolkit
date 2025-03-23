@@ -8,11 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MyAdapter (var incidentList: ArrayList<IncidentList>): RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
-   // fun updateIncidents(newIncidentList: ArrayList<IncidentList>) {
-        //incidentList.clear()
-        //incidentList.addAll(newIncidentList)
-//notifyItemInserted(0)
-   // }
 
     class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val tIncidentID: TextView? = itemView.findViewById(R.id.tIncidentID)
@@ -31,7 +26,7 @@ class MyAdapter (var incidentList: ArrayList<IncidentList>): RecyclerView.Adapte
     }
 
     override fun getItemCount(): Int {
-        var listSize = incidentList.size
+        incidentList.size
         //Log.i("Adapter","$listSize")
         return incidentList.size
     }
@@ -47,6 +42,5 @@ class MyAdapter (var incidentList: ArrayList<IncidentList>): RecyclerView.Adapte
         holder.tIncidentLoc?.text = currentItem.incidentLoc
         holder.tIncidentStart.text = currentItem.incidentStartDTG.toString()
     }
-
 
 }

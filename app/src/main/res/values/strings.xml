@@ -5,6 +5,6 @@
     <string name="IncidentType">Incident Type</string>
     <string name="IncidentLoc">Incident Location</string>
     <string name="submitIncident">Submit Incident</string>
-    <string name="showIncidents">Show Incidents</string>
+    <string name="refresh">Refresh</string>
     <string name="title_activity_main2">MainActivity2</string>
 </resources>

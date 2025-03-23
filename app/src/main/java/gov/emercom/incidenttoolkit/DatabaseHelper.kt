@@ -47,7 +47,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         db?.execSQL("DROP TABLE IF EXISTS INCIDENT_TABLE")
     }
 
-    public fun insertIncident(incident: IncidentList): Boolean {
+    fun insertIncident(incident: IncidentList): Boolean {
         val db = this.writableDatabase
         val timestamp = Instant.now().toEpochMilli()
         val values = ContentValues().apply {
@@ -57,26 +57,23 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
             put(COL_START, timestamp)
         }
         val insert = db.insert(INCIDENT_TABLE, null, values)
-        if (insert.toInt() == -1) {
-            return false
-        }
-        else {
-            return true
-        }
+        return insert.toInt() != -1
     }
 
-    //Added in Recyclerview tutorial
-    fun getText(): Cursor? {
+    //called by displayIncident@MainActivity for RecyclerView
+    fun getIncidentList(): Cursor? {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $INCIDENT_TABLE ORDER BY $COL_ID DESC",null)
         return cursor
+        cursor.close()
+        db.close()
     }
 
 
-    public fun getAllIncidents(): List<String> {
+    fun getAllIncidents(): List<String> {
 
         val returnList = mutableListOf<String>()
-        val queryString : String = "SELECT * FROM $INCIDENT_TABLE ORDER BY $COL_ID DESC"
+        val queryString = "SELECT * FROM $INCIDENT_TABLE ORDER BY $COL_ID DESC"
         val db = this.readableDatabase
         val cursor: Cursor? = db.rawQuery(queryString, null)
 
@@ -91,7 +88,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
                     val incidentStart: Long = cursor.getLong(4)
                     val incidentStartDTG: String = FormatDate(incidentStart).toString()
 
-                    val newIncident: IncidentList = IncidentList(incidentID,incidentName,incidentType,incidentLoc,incidentStart, incidentStartDTG)
+                    val newIncident = IncidentList(incidentID,incidentName,incidentType,incidentLoc,incidentStart, incidentStartDTG)
                     returnList.add(newIncident.toString())
 
                 } while (cursor.moveToNext())

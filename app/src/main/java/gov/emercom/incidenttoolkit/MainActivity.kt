@@ -3,7 +3,6 @@ package gov.emercom.incidenttoolkit
 import android.R.id
 import android.database.Cursor
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -18,13 +17,12 @@ class MainActivity : ComponentActivity() {
 
     //references to layout controls (member variables)
     private lateinit var bSubmitIncident: Button
-    private lateinit var bShowIncidents: Button
+    private lateinit var bRefreshIncidents: Button
     private lateinit var incidentID: id
     private lateinit var ptIncidentName: TextView
     private lateinit var acIncidentType: AutoCompleteTextView
     private lateinit var acIncidentLoc: AutoCompleteTextView
     private lateinit var recyclerView: RecyclerView
-    // added in recyclerview tutorial
     private lateinit var db: DatabaseHelper
     lateinit var dbh: DatabaseHelper
     private lateinit var newArray: ArrayList<IncidentList>
@@ -35,7 +33,7 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.activity_main)
 
         bSubmitIncident = findViewById(R.id.bSubmitIncident)
-        bShowIncidents = findViewById(R.id.bShowIncidents)
+        bRefreshIncidents = findViewById(R.id.bRefreshIncidents)
         ptIncidentName = findViewById(R.id.ptIncidentName)
         acIncidentType = findViewById(R.id.acIncidentType)
         acIncidentLoc = findViewById(R.id.acIncidentLoc)
@@ -79,6 +77,9 @@ class MainActivity : ComponentActivity() {
                         incidentStartDTG.toString()
                     )
                     newIncident
+                    ptIncidentName.text = ""
+                    acIncidentType.setText("")
+                    acIncidentLoc.setText("")
                 }
 
                 catch (e: Exception) {
@@ -104,32 +105,30 @@ class MainActivity : ComponentActivity() {
                 val databaseHelper = DatabaseHelper(this@MainActivity)
 
                 val success: Boolean = databaseHelper.insertIncident(incident)
-                val toast = Toast.makeText(this@MainActivity, "Success:$success",Toast.LENGTH_SHORT)
+                val toast = Toast.makeText(this@MainActivity, "Incident Creation $success",Toast.LENGTH_SHORT)
                 toast.show()
+
+                displayIncident()
             }
         })
 
-        bShowIncidents.setOnClickListener(object : View.OnClickListener {
+        bRefreshIncidents.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                // Action to perform when the button is clicked
-                //val databaseHelper = DatabaseHelper(this@MainActivity)
 
-                //val allIncidents: List<String> = databaseHelper.getAllIncidents()
-
-                //val incidentArrayAdapter = ArrayAdapter(this@MainActivity,android.R.layout.simple_list_item_1, allIncidents)
-
+                ptIncidentName.text = ""
+                acIncidentType.setText("")
+                acIncidentLoc.setText("")
                 return displayIncident()
 
-                //val toast = Toast.makeText(this@MainActivity, "$allIncidents", Toast.LENGTH_LONG)
-                //toast.show()
 
             }
         })
 
     }
-    //Added in Recyclerview tutorial
+
+    //Incident display updater for RecyclerView
     fun displayIncident() {
-        var newCursor: Cursor? = dbh.getText()
+        var newCursor: Cursor? = dbh.getIncidentList()
         newArray = ArrayList<IncidentList>()
         while (newCursor!!.moveToNext()){
             val uIncidentID = newCursor.getInt(0)
@@ -147,18 +146,11 @@ class MainActivity : ComponentActivity() {
                 uIncidentStart,
                 uIncidentStartDTG
             ))
-            var arrayText = newArray.toString()
-            Log.i("displayIncident",arrayText)
+            //var arrayText = newArray.toString()
+            //Log.i("displayIncident",arrayText)
         }
 
         recyclerView.adapter = MyAdapter(newArray)
-
-       /* fun updateIncidents(){
-            var updateIncidents = MyAdapter(newArray).updateIncidents(newArray)
-            return updateIncidents
-        }
-        updateIncidents()
-        */
 
 
     }
