@@ -1,8 +1,10 @@
 package gov.emercom.incidenttoolkit
 
 import android.R.id
+import android.content.ContentValues.TAG
 import android.database.Cursor
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -18,6 +20,7 @@ class MainActivity : ComponentActivity() {
     //references to layout controls (member variables)
     private lateinit var bSubmitIncident: Button
     private lateinit var bRefreshIncidents: Button
+    private lateinit var bDeleteRecord: Button
     private lateinit var incidentID: id
     private lateinit var ptIncidentName: TextView
     private lateinit var acIncidentType: AutoCompleteTextView
@@ -34,19 +37,24 @@ class MainActivity : ComponentActivity() {
 
         bSubmitIncident = findViewById(R.id.bSubmitIncident)
         bRefreshIncidents = findViewById(R.id.bRefreshIncidents)
+        bDeleteRecord = findViewById(R.id.bDeleteIncident)
         ptIncidentName = findViewById(R.id.ptIncidentName)
         acIncidentType = findViewById(R.id.acIncidentType)
         acIncidentLoc = findViewById(R.id.acIncidentLoc)
         recyclerView = findViewById(R.id.rvIncidentList)
 
-        //Test Recycler definition
+        //Recycler definitions
         db = DatabaseHelper(this)
         dbh = DatabaseHelper(this)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
         displayIncident()
 
-        //Button listeners for submit and show
+        //foxandroid tutorial
+        newArray = arrayListOf<IncidentList>()
+
+
+        //Button listeners
         bSubmitIncident.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
 
@@ -124,6 +132,21 @@ class MainActivity : ComponentActivity() {
             }
         })
 
+
+
+        bDeleteRecord.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                TODO("Not yet implemented")
+            }
+
+
+        })
+
+        recyclerView.setOnLongClickListener(object : View.OnLongClickListener {
+            override fun onLongClick(v: View?): Boolean {
+            return true}
+        })
+
     }
 
     //Incident display updater for RecyclerView
@@ -150,9 +173,18 @@ class MainActivity : ComponentActivity() {
             //Log.i("displayIncident",arrayText)
         }
 
-        recyclerView.adapter = MyAdapter(newArray)
+        //changed in Foxandroid tutorial
+        var adapter = MyAdapter(newArray)
+        recyclerView.adapter = adapter
+        adapter.setOnItemClickListener(object: MyAdapter.onItemClickListener{
+            override fun onItemClick(position: Int) {
+                Toast.makeText(this@MainActivity,"Clicked on $position",Toast.LENGTH_SHORT).show()
+                Log.i("Adapter","Clicked $position")
+            }
 
+        })
 
     }
+
 
 }

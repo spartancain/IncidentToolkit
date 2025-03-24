@@ -7,4 +7,5 @@
     <string name="submitIncident">Submit Incident</string>
     <string name="refresh">Refresh</string>
     <string name="title_activity_main2">MainActivity2</string>
+    <string name="delete">Delete Record</string>
 </resources>

@@ -105,5 +105,18 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         return returnList
     }
 
+    fun deleteIncident(incident: IncidentList): Boolean {
+        //find model in DB, if found delete and return true. If not found, return false.
+        val db = this.writableDatabase
+        val queryString = "DELETE FROM " + INCIDENT_TABLE + " WHERE " + COL_ID + " = " + incident.incidentID
+
+        val cursor = db.rawQuery(queryString, null)
+
+        return cursor.moveToFirst()
+
+        cursor.close()
+        db.close()
+    }
+
 
 }
