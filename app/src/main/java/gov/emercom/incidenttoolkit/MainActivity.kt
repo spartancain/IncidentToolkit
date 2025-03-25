@@ -1,8 +1,5 @@
 package gov.emercom.incidenttoolkit
 
-import android.R.id
-import android.content.ContentValues.TAG
-import android.content.DialogInterface
 import android.database.Cursor
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +10,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -23,7 +19,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var bSubmitIncident: Button
     private lateinit var bRefreshIncidents: Button
     private lateinit var bDeleteRecord: Button
-    private lateinit var incidentID: id
+    private var incidentID: Int = -1
     private lateinit var ptIncidentName: TextView
     private lateinit var acIncidentType: AutoCompleteTextView
     private lateinit var acIncidentLoc: AutoCompleteTextView
@@ -31,6 +27,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var db: DatabaseHelper
     lateinit var dbh: DatabaseHelper
     private lateinit var newArray: ArrayList<IncidentList>
+    private var selectedIncident: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,12 +63,12 @@ class MainActivity : ComponentActivity() {
             override fun onClick(v: View?) {
 
                 // Action to perform when the button is clicked
-                var incidentID = -1
-                var incidentName = ptIncidentName.text.toString()
-                var incidentType = acIncidentType.text.toString()
-                var incidentLoc = acIncidentLoc.text.toString()
-                var incidentStart = -1
-                var incidentStartDTG = -1
+                val incidentID = -1
+                val incidentName = ptIncidentName.text.toString()
+                val incidentType = acIncidentType.text.toString()
+                val incidentLoc = acIncidentLoc.text.toString()
+                val incidentStart = -1
+                val incidentStartDTG = -1
                 val incident = IncidentList(
                     incidentID,
                     incidentName,
@@ -143,7 +140,19 @@ class MainActivity : ComponentActivity() {
 
         bDeleteRecord.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                TODO("Not yet implemented")
+                if (selectedIncident != -1){
+                    dbh.deleteIncident(selectedIncident)
+                    Toast.makeText(this@MainActivity,"Incident $selectedIncident Deleted",Toast.LENGTH_SHORT).show()
+
+                    ptIncidentName.text = ""
+                    acIncidentType.setText("")
+                    acIncidentLoc.setText("")
+                    selectedIncident = -1
+                    return displayIncident()
+                }
+                else {
+                    Toast.makeText(this@MainActivity,"No Selection To Delete",Toast.LENGTH_SHORT).show()
+                }
             }
 
 
@@ -183,7 +192,7 @@ class MainActivity : ComponentActivity() {
         //changed in Foxandroid tutorial
         var adapter = MyAdapter(newArray)
         recyclerView.adapter = adapter
-        adapter.setOnItemClickListener(object: MyAdapter.onItemClickListener{
+        adapter.setOnItemClickListener(object: MyAdapter.OnItemClickListener{
             override fun onItemClick(position: Int) {
                 Toast.makeText(this@MainActivity,"Clicked on $position",Toast.LENGTH_SHORT).show()
                 Log.i("Adapter","Clicked $position")
@@ -192,18 +201,23 @@ class MainActivity : ComponentActivity() {
         })
 
         //longclick
-        adapter.setOnItemLongClickListener(object: MyAdapter.onItemLongClickListener{
-            override fun onItemLongClick(position: Int) {
-                val dialogBuilder = AlertDialog.Builder(this@MainActivity)
-                dialogBuilder.setTitle("Long Click Received")
-                dialogBuilder.setMessage("Position $position Long-Clicked")
-                dialogBuilder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                    Toast.makeText(this@MainActivity,"OK Confirmed",Toast.LENGTH_SHORT).show()
-                })
-                dialogBuilder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                    dialog.dismiss()
-                })
-                    .show()
+        adapter.setOnItemLongClickListener(object: MyAdapter.OnItemLongClickListener{
+            override fun onItemLongClick(position: Int, selectedIncidentID: String) {
+
+                selectedIncident = selectedIncidentID.toInt()
+                Toast.makeText(this@MainActivity,"Selected Incident $selectedIncidentID",Toast.LENGTH_SHORT).show()
+
+                //Alert Dialog Box
+//                val dialogBuilder = AlertDialog.Builder(this@MainActivity)
+//                dialogBuilder.setTitle("Long Click Received")
+//                dialogBuilder.setMessage("Position $position Long-Clicked")
+//                dialogBuilder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
+//                    Toast.makeText(this@MainActivity,"OK Confirmed",Toast.LENGTH_SHORT).show()
+//                })
+//                dialogBuilder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
+//                    dialog.dismiss()
+//                })
+//                    .show()
             }
         })
 

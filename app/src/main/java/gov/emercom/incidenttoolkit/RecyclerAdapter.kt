@@ -8,50 +8,43 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
-    //foxandroid tutorial
-    private lateinit var clickListener : onItemClickListener
+    //Click and LongClick vars interfaces and funs
+    private lateinit var clickListener : OnItemClickListener
+    private lateinit var longClickListener : OnItemLongClickListener
 
-    //attempting longclick
-    private lateinit var longClickListener : onItemLongClickListener
-
-    //foxandroid click
-    interface onItemClickListener{
+    interface OnItemClickListener{
         fun onItemClick(position: Int)
     }
 
-    //longclick
-    interface onItemLongClickListener{
-        fun onItemLongClick(position: Int)
+    interface OnItemLongClickListener{
+        fun onItemLongClick(position: Int, selectedIncidentID: String)
     }
 
-    //foxandroid
-    fun setOnItemClickListener(listener: onItemClickListener){
+    fun setOnItemClickListener(listener: OnItemClickListener){
         clickListener = listener
     }
 
-    //longclick
-    fun setOnItemLongClickListener(listener: onItemLongClickListener){
+    fun setOnItemLongClickListener(listener: OnItemLongClickListener){
         longClickListener = listener
     }
 
 
-
-    class MyViewHolder(itemView: View, clickListener: onItemClickListener, longClickListener: onItemLongClickListener): RecyclerView.ViewHolder(itemView){
+//Actual view holder
+    class MyViewHolder(itemView: View, clickListener: OnItemClickListener, longClickListener: OnItemLongClickListener): RecyclerView.ViewHolder(itemView){
         val tIncidentID: TextView? = itemView.findViewById(R.id.tIncidentID)
         val tIncidentName: TextView? = itemView.findViewById(R.id.tIncidentName)
         val tIncidentType: TextView? = itemView.findViewById(R.id.tIncidentType)
         val tIncidentLoc: TextView? = itemView.findViewById(R.id.tIncidentLoc)
         val tIncidentStart: TextView = itemView.findViewById(R.id.tIncidentStart)
 
-        //foxandroid tutorial
+        //Recycler Item Click and LongClick listeners
         init {
             itemView.setOnClickListener {
                 clickListener.onItemClick((absoluteAdapterPosition))
             }
 
-            //longclick
             itemView.setOnLongClickListener {
-                longClickListener.onItemLongClick((absoluteAdapterPosition))
+                longClickListener.onItemLongClick(absoluteAdapterPosition, selectedIncidentID = this.tIncidentID?.text.toString())
                 return@setOnLongClickListener true
             }
         }
@@ -69,7 +62,6 @@ class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapte
 
     override fun getItemCount(): Int {
         incidentList.size
-        //Log.i("Adapter","$listSize")
         return incidentList.size
     }
 

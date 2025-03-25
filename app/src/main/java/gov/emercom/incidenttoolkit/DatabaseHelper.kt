@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import java.time.Instant
 import kotlin.apply
-import kotlin.collections.toList
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db", null, 1) {
 
@@ -17,10 +16,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
      var COL_INCIDENT_TYPE = "INCIDENT_TYPE"
      var COL_INCIDENT_LOC = "INCIDENT_LOC"
      val COL_START = "START"
-     val incidentList = getAllIncidents().toList()
 
     override fun onCreate(db: SQLiteDatabase?) {
-        var createTableStatement = buildString {
+        val createTableStatement = buildString {
             append("CREATE TABLE ")
             append(INCIDENT_TABLE)
             append("(")
@@ -61,12 +59,12 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
     }
 
     //called by displayIncident@MainActivity for RecyclerView
-    fun getIncidentList(): Cursor? {
+    fun getIncidentList(): Cursor {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $INCIDENT_TABLE ORDER BY $COL_ID DESC",null)
-        return cursor
         cursor.close()
         db.close()
+        return cursor
     }
 
 
@@ -75,7 +73,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         val returnList = mutableListOf<String>()
         val queryString = "SELECT * FROM $INCIDENT_TABLE ORDER BY $COL_ID DESC"
         val db = this.readableDatabase
-        val cursor: Cursor? = db.rawQuery(queryString, null)
+        val cursor: Cursor = db.rawQuery(queryString, null)
 
         if (cursor != null) {
             if (cursor.moveToFirst()){
@@ -86,7 +84,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
                     val incidentType: String = cursor.getString(2)
                     val incidentLoc: String = cursor.getString(3)
                     val incidentStart: Long = cursor.getLong(4)
-                    val incidentStartDTG: String = FormatDate(incidentStart).toString()
+                    val incidentStartDTG: String = FormatDate(incidentStart)
 
                     val newIncident = IncidentList(incidentID,incidentName,incidentType,incidentLoc,incidentStart, incidentStartDTG)
                     returnList.add(newIncident.toString())
@@ -109,26 +107,26 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         val returnList = mutableListOf<String>()
         val queryString = "SELECT $COL_INCIDENT_TYPE FROM $INCIDENT_TABLE"
         val db = this.readableDatabase
-        val cursor: Cursor? = db.rawQuery(queryString, null)
+        val cursor: Cursor = db.rawQuery(queryString, null)
 
         if (cursor != null) {
             if (cursor.moveToFirst())
                 return returnList
         }
+        cursor.close()
+        db.close()
         return returnList
     }
 
-    fun deleteIncident(incident: IncidentList): Boolean {
+    fun deleteIncident(incident: Int): Boolean {
         //find model in DB, if found delete and return true. If not found, return false.
         val db = this.writableDatabase
-        val queryString = "DELETE FROM " + INCIDENT_TABLE + " WHERE " + COL_ID + " = " + incident.incidentID
+        val queryString = "DELETE FROM $INCIDENT_TABLE WHERE $COL_ID = $incident"
 
         val cursor = db.rawQuery(queryString, null)
-
-        return cursor.moveToFirst()
-
         cursor.close()
         db.close()
+        return cursor.moveToFirst()
     }
 
 
