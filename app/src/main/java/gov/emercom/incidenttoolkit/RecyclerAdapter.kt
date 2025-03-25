@@ -1,30 +1,42 @@
 package gov.emercom.incidenttoolkit
 
-import android.text.Layout
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 
 class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
     //foxandroid tutorial
-    private lateinit var mListener : onItemClickListener
+    private lateinit var clickListener : onItemClickListener
 
+    //attempting longclick
+    private lateinit var longClickListener : onItemLongClickListener
+
+    //foxandroid click
     interface onItemClickListener{
         fun onItemClick(position: Int)
     }
 
+    //longclick
+    interface onItemLongClickListener{
+        fun onItemLongClick(position: Int)
+    }
+
+    //foxandroid
     fun setOnItemClickListener(listener: onItemClickListener){
-        mListener = listener
+        clickListener = listener
+    }
+
+    //longclick
+    fun setOnItemLongClickListener(listener: onItemLongClickListener){
+        longClickListener = listener
     }
 
 
 
-    class MyViewHolder(itemView: View, listener: onItemClickListener): RecyclerView.ViewHolder(itemView){
+    class MyViewHolder(itemView: View, clickListener: onItemClickListener, longClickListener: onItemLongClickListener): RecyclerView.ViewHolder(itemView){
         val tIncidentID: TextView? = itemView.findViewById(R.id.tIncidentID)
         val tIncidentName: TextView? = itemView.findViewById(R.id.tIncidentName)
         val tIncidentType: TextView? = itemView.findViewById(R.id.tIncidentType)
@@ -34,7 +46,13 @@ class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapte
         //foxandroid tutorial
         init {
             itemView.setOnClickListener {
-                listener.onItemClick((absoluteAdapterPosition))
+                clickListener.onItemClick((absoluteAdapterPosition))
+            }
+
+            //longclick
+            itemView.setOnLongClickListener {
+                longClickListener.onItemLongClick((absoluteAdapterPosition))
+                return@setOnLongClickListener true
             }
         }
     }
@@ -45,7 +63,7 @@ class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapte
         ): MyViewHolder
     {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item,parent,false)
-        return MyViewHolder(itemView,mListener)
+        return MyViewHolder(itemView,clickListener, longClickListener)
 
     }
 

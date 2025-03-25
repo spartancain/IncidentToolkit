@@ -105,6 +105,19 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         return returnList
     }
 
+    fun getIncidentTypes(): List<String>{
+        val returnList = mutableListOf<String>()
+        val queryString = "SELECT $COL_INCIDENT_TYPE FROM $INCIDENT_TABLE"
+        val db = this.readableDatabase
+        val cursor: Cursor? = db.rawQuery(queryString, null)
+
+        if (cursor != null) {
+            if (cursor.moveToFirst())
+                return returnList
+        }
+        return returnList
+    }
+
     fun deleteIncident(incident: IncidentList): Boolean {
         //find model in DB, if found delete and return true. If not found, return false.
         val db = this.writableDatabase

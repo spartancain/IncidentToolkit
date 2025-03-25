@@ -2,6 +2,7 @@ package gov.emercom.incidenttoolkit
 
 import android.R.id
 import android.content.ContentValues.TAG
+import android.content.DialogInterface
 import android.database.Cursor
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -43,14 +45,19 @@ class MainActivity : ComponentActivity() {
         acIncidentLoc = findViewById(R.id.acIncidentLoc)
         recyclerView = findViewById(R.id.rvIncidentList)
 
+
+        //Autofill Hints?? Not working yet but it aint broke the fucker so it stays
+        val databaseHelper = DatabaseHelper(this@MainActivity)
+        val incidentTypes = databaseHelper.getIncidentTypes().toString()
+        acIncidentType.setAutofillHints(incidentTypes)
+
         //Recycler definitions
         db = DatabaseHelper(this)
         dbh = DatabaseHelper(this)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
         displayIncident()
-
-        //foxandroid tutorial
+        //initialize newArray for onclicklistener in recyclerview
         newArray = arrayListOf<IncidentList>()
 
 
@@ -182,6 +189,22 @@ class MainActivity : ComponentActivity() {
                 Log.i("Adapter","Clicked $position")
             }
 
+        })
+
+        //longclick
+        adapter.setOnItemLongClickListener(object: MyAdapter.onItemLongClickListener{
+            override fun onItemLongClick(position: Int) {
+                val dialogBuilder = AlertDialog.Builder(this@MainActivity)
+                dialogBuilder.setTitle("Long Click Received")
+                dialogBuilder.setMessage("Position $position Long-Clicked")
+                dialogBuilder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
+                    Toast.makeText(this@MainActivity,"OK Confirmed",Toast.LENGTH_SHORT).show()
+                })
+                dialogBuilder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
+                    dialog.dismiss()
+                })
+                    .show()
+            }
         })
 
     }
