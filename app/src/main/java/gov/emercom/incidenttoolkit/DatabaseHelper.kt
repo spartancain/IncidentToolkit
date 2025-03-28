@@ -62,9 +62,10 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
     fun getIncidentList(): Cursor {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $INCIDENT_TABLE ORDER BY $COL_ID DESC",null)
+
+        return cursor
         cursor.close()
         db.close()
-        return cursor
     }
 
 
@@ -96,8 +97,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
                 //on fail do not add anything to the list
             }
 
-            cursor.close()
-            db.close()
         }
 
         return returnList
@@ -113,8 +112,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
             if (cursor.moveToFirst())
                 return returnList
         }
-        cursor.close()
-        db.close()
         return returnList
     }
 
@@ -124,9 +121,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         val queryString = "DELETE FROM $INCIDENT_TABLE WHERE $COL_ID = $incident"
 
         val cursor = db.rawQuery(queryString, null)
+        return cursor.moveToFirst()
         cursor.close()
         db.close()
-        return cursor.moveToFirst()
     }
 
 

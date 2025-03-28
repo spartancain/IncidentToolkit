@@ -12,6 +12,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import gov.emercom.incidenttoolkit.MyAdapter.MyViewHolder
 
 class MainActivity : ComponentActivity() {
 
@@ -158,11 +159,6 @@ class MainActivity : ComponentActivity() {
 
         })
 
-        recyclerView.setOnLongClickListener(object : View.OnLongClickListener {
-            override fun onLongClick(v: View?): Boolean {
-            return true}
-        })
-
     }
 
     //Incident display updater for RecyclerView
@@ -205,7 +201,10 @@ class MainActivity : ComponentActivity() {
             override fun onItemLongClick(position: Int, selectedIncidentID: String) {
 
                 selectedIncident = selectedIncidentID.toInt()
+                MyAdapter.OnSelectedIncident.selectedIncident = selectedIncident
+
                 Toast.makeText(this@MainActivity,"Selected Incident $selectedIncidentID",Toast.LENGTH_SHORT).show()
+
 
                 //Alert Dialog Box
 //                val dialogBuilder = AlertDialog.Builder(this@MainActivity)
