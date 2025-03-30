@@ -5,8 +5,10 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import gov.emercom.incidenttoolkit.main.IncidentList
 import java.time.Instant
 import kotlin.apply
+import android.util.Log
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db", null, 1) {
 
@@ -64,42 +66,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         val cursor = db.rawQuery("SELECT * FROM $INCIDENT_TABLE ORDER BY $COL_ID DESC",null)
 
         return cursor
-        cursor.close()
-        db.close()
-    }
-
-
-    fun getAllIncidents(): List<String> {
-
-        val returnList = mutableListOf<String>()
-        val queryString = "SELECT * FROM $INCIDENT_TABLE ORDER BY $COL_ID DESC"
-        val db = this.readableDatabase
-        val cursor: Cursor = db.rawQuery(queryString, null)
-
-        if (cursor != null) {
-            if (cursor.moveToFirst()){
-                // loop through the cursor and put them into return list
-                do {
-                    val incidentID: Int = cursor.getInt(0)
-                    val incidentName: String = cursor.getString(1)
-                    val incidentType: String = cursor.getString(2)
-                    val incidentLoc: String = cursor.getString(3)
-                    val incidentStart: Long = cursor.getLong(4)
-                    val incidentStartDTG: String = FormatDate(incidentStart)
-
-                    val newIncident = IncidentList(incidentID,incidentName,incidentType,incidentLoc,incidentStart, incidentStartDTG)
-                    returnList.add(newIncident.toString())
-
-                } while (cursor.moveToNext())
-
-            }
-            else {
-                //on fail do not add anything to the list
-            }
-
-        }
-
-        return returnList
     }
 
     fun getIncidentTypes(): List<String>{
@@ -107,11 +73,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         val queryString = "SELECT $COL_INCIDENT_TYPE FROM $INCIDENT_TABLE"
         val db = this.readableDatabase
         val cursor: Cursor = db.rawQuery(queryString, null)
-
-        if (cursor != null) {
-            if (cursor.moveToFirst())
+        if (cursor.moveToFirst())
                 return returnList
-        }
         return returnList
     }
 
@@ -122,8 +85,26 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
 
         val cursor = db.rawQuery(queryString, null)
         return cursor.moveToFirst()
-        cursor.close()
-        db.close()
+    }
+
+    fun getSelectedIncident(incident: Int): ArrayList<IncidentList> {
+        val db = this.readableDatabase
+        val incidentArray = ArrayList<IncidentList>()
+        val queryString = "SELECT * FROM $INCIDENT_TABLE WHERE $COL_ID = $incident"
+        val cursor = db.rawQuery(queryString,null)
+        if (cursor.moveToFirst()){
+            do{
+                incidentArray.add(IncidentList(
+                    incidentID = cursor.getInt(0),
+                    incidentName = cursor.getString(1),
+                    incidentType = cursor.getString(2),
+                    incidentLoc = cursor.getString(3),
+                    incidentStart = cursor.getLong(4),
+                    incidentStartDTG = FormatDate(cursor.getLong(4))
+                ))
+            } while (cursor.moveToNext())
+        }
+        return incidentArray
     }
 
 

@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".main.MainActivity">
 
     <TextView
         android:id="@+id/tvIncidentCreationPageTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="30dp"
         android:paddingStart="10dp"
         android:text="@string/tvIncidentCreationPageTitle"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -30,6 +30,7 @@
         android:inputType="text"
         android:padding="15dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="@+id/tvIncidentCreationPageTitle"
         app:layout_constraintTop_toBottomOf="@+id/tvIncidentCreationPageTitle" />
 
@@ -42,6 +43,7 @@
         android:hint="@string/IncidentType"
         android:padding="15dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="@+id/tvIncidentCreationPageTitle"
         app:layout_constraintTop_toBottomOf="@+id/ptIncidentName" />
 
@@ -54,6 +56,7 @@
         android:hint="@string/IncidentLoc"
         android:padding="15dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="@+id/tvIncidentCreationPageTitle"
         app:layout_constraintTop_toBottomOf="@+id/acIncidentType" />
 

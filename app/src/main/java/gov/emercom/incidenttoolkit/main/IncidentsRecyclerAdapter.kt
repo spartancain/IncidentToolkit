@@ -1,14 +1,16 @@
-package gov.emercom.incidenttoolkit
+package gov.emercom.incidenttoolkit.main
 
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlin.math.abs
+import gov.emercom.incidenttoolkit.R
+import gov.emercom.incidenttoolkit.incident.IncidentActivity
 
-class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
+class IncidentsRecyclerAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapter<IncidentsRecyclerAdapter.IncidentListViewHolder>() {
 
     //Click and LongClick vars interfaces and funs
     private lateinit var clickListener : OnItemClickListener
@@ -26,7 +28,7 @@ class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapte
     //
 
     interface OnItemClickListener{
-        fun onItemClick(position: Int)
+        fun onItemClick(position: Int, selectedIncidentID: String)
     }
 
     interface OnItemLongClickListener{
@@ -43,11 +45,11 @@ class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapte
 
 
 //Actual view holder
-    class MyViewHolder(
-        itemView: View,
-        clickListener: OnItemClickListener,
-        longClickListener: OnItemLongClickListener,
-        selectedIncident: Int
+    class IncidentListViewHolder(
+    itemView: View,
+    clickListener: OnItemClickListener,
+    longClickListener: OnItemLongClickListener,
+    selectedIncident: Int
         ): RecyclerView.ViewHolder(itemView){
 
         val tIncidentID: TextView? = itemView.findViewById(R.id.tIncidentID)
@@ -60,14 +62,21 @@ class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapte
         //Recycler Item Click and LongClick listeners
         init {
             itemView.setOnClickListener {
-                clickListener.onItemClick((absoluteAdapterPosition))
+                clickListener.onItemClick(absoluteAdapterPosition, selectedIncidentID = this.tIncidentID?.text.toString())
+                val intent = Intent(itemView.context, IncidentActivity::class.java)
+                val selectedIncidentID = this.tIncidentID?.text.toString()
+                intent.putExtra("selectedIncidentID", selectedIncidentID)
+                Log.i("ClickedIncident", "Incident $selectedIncidentID")
+                itemView.context.startActivity(intent)
             }
 
             itemView.setOnLongClickListener {
-                longClickListener.onItemLongClick(absoluteAdapterPosition, selectedIncidentID = this.tIncidentID?.text.toString())
+                longClickListener.onItemLongClick(
+                    absoluteAdapterPosition,
+                    selectedIncidentID = this.tIncidentID?.text.toString()
+                )
                 Log.i("isSelected", "Set Background resource $selectedIncident")
-                val selectedItem = selectedIncident
-                val isSelected = selectedItem == bindingAdapterPosition
+                val isSelected = selectedIncident == bindingAdapterPosition
                 if (isSelected) {
                     itemView.setBackgroundResource(R.color.obj_blue_selected)
                 } else {
@@ -84,10 +93,10 @@ class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapte
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-        ): MyViewHolder
+        ): IncidentListViewHolder
     {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item,parent,false)
-        return MyViewHolder(itemView,clickListener, longClickListener, selectedIncident)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.incident_recycler_item,parent,false)
+        return IncidentListViewHolder(itemView,clickListener, longClickListener, selectedIncident)
 
     }
 
@@ -97,7 +106,7 @@ class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapte
     }
 
     override fun onBindViewHolder(
-        holder: MyViewHolder,
+        holder: IncidentListViewHolder,
         position: Int
     ) {
         val currentIncident = incidentList[position]
@@ -111,23 +120,7 @@ class MyAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapte
 
         val selectedItem = selectedIncident.toString().toInt()
 
-
-
-//        itemView.setOnLongClickListener {
-//
-//            longClickListener.onItemLongClick(position, holder.tIncidentID?.text.toString())
-//            val selectedIncidentID = this.toString()
-//            holder.itemView.setBackgroundResource(R.color.obj_blue_selected)
-//            //Log.i("LongClicker","Position $position, Incident $selectedIncidentID")
-//            return@setOnLongClickListener true
-//        }
         selectedIncident = holder.absoluteAdapterPosition
-        val isSelected = selectedItem == position
-        if (isSelected) {
-            holder.itemView.setBackgroundResource(R.color.obj_blue_selected)
-        } else {
-            holder.itemView.setBackgroundResource(R.color.obj_blue)
-        }
 
     }
 

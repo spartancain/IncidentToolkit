@@ -1,5 +1,7 @@
-package gov.emercom.incidenttoolkit
+package gov.emercom.incidenttoolkit.main
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.database.Cursor
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +14,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import gov.emercom.incidenttoolkit.MyAdapter.MyViewHolder
+import gov.emercom.incidenttoolkit.DatabaseHelper
+import gov.emercom.incidenttoolkit.FormatDate
+import gov.emercom.incidenttoolkit.R
 
 class MainActivity : ComponentActivity() {
 
@@ -20,7 +24,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var bSubmitIncident: Button
     private lateinit var bRefreshIncidents: Button
     private lateinit var bDeleteRecord: Button
-    private var incidentID: Int = -1
     private lateinit var ptIncidentName: TextView
     private lateinit var acIncidentType: AutoCompleteTextView
     private lateinit var acIncidentLoc: AutoCompleteTextView
@@ -89,7 +92,6 @@ class MainActivity : ComponentActivity() {
                         incidentStart.toLong(),
                         incidentStartDTG.toString()
                     )
-                    newIncident
                     ptIncidentName.text = ""
                     acIncidentType.setText("")
                     acIncidentLoc.setText("")
@@ -104,7 +106,7 @@ class MainActivity : ComponentActivity() {
                         -1,
                         (-1).toString()
                     )
-                    newIncident
+
 
                     val toast = Toast.makeText(
                         this@MainActivity,
@@ -112,7 +114,6 @@ class MainActivity : ComponentActivity() {
                         Toast.LENGTH_SHORT
                     )
                     toast.show()
-                    incident
                 }
 
                 val databaseHelper = DatabaseHelper(this@MainActivity)
@@ -142,14 +143,32 @@ class MainActivity : ComponentActivity() {
         bDeleteRecord.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 if (selectedIncident != -1){
+                    //Alert Dialog Box
+                val dialogBuilder = AlertDialog.Builder(this@MainActivity)
+                dialogBuilder.setTitle("Confirm Incident Deletion")
+                dialogBuilder.setMessage("Delete Incident $selectedIncident?")
+                dialogBuilder.setPositiveButton("Delete") { dialog, which ->
                     dbh.deleteIncident(selectedIncident)
-                    Toast.makeText(this@MainActivity,"Incident $selectedIncident Deleted",Toast.LENGTH_SHORT).show()
-
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Incident $selectedIncident Deleted",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     ptIncidentName.text = ""
                     acIncidentType.setText("")
                     acIncidentLoc.setText("")
                     selectedIncident = -1
-                    return displayIncident()
+                    displayIncident()
+                }
+                    dialogBuilder.setNegativeButton("Cancel") { dialog, which ->
+                        ptIncidentName.text = ""
+                        acIncidentType.setText("")
+                        acIncidentLoc.setText("")
+                        selectedIncident = -1
+                        displayIncident()
+                        Toast.makeText(this@MainActivity, "Cancelled", Toast.LENGTH_SHORT).show()
+                    }
+                        .show()
                 }
                 else {
                     Toast.makeText(this@MainActivity,"No Selection To Delete",Toast.LENGTH_SHORT).show()
@@ -163,9 +182,9 @@ class MainActivity : ComponentActivity() {
 
     //Incident display updater for RecyclerView
     fun displayIncident() {
-        var newCursor: Cursor? = dbh.getIncidentList()
+        val newCursor: Cursor = dbh.getIncidentList()
         newArray = ArrayList<IncidentList>()
-        while (newCursor!!.moveToNext()){
+        while (newCursor.moveToNext()){
             val uIncidentID = newCursor.getInt(0)
             val uIncidentName = newCursor.getString(1)
             val uIncidentType = newCursor.getString(2)
@@ -173,50 +192,40 @@ class MainActivity : ComponentActivity() {
             val uIncidentStart = newCursor.getLong(4)
             val uIncidentStartDTG = FormatDate(uIncidentStart)
 
-            newArray.add(IncidentList(
+            newArray.add(
+                IncidentList(
                 uIncidentID,
                 uIncidentName,
                 uIncidentType,
                 uIncidentLoc,
                 uIncidentStart,
                 uIncidentStartDTG
-            ))
+            )
+            )
             //var arrayText = newArray.toString()
             //Log.i("displayIncident",arrayText)
         }
 
         //changed in Foxandroid tutorial
-        var adapter = MyAdapter(newArray)
+        val adapter = IncidentsRecyclerAdapter(newArray)
         recyclerView.adapter = adapter
-        adapter.setOnItemClickListener(object: MyAdapter.OnItemClickListener{
-            override fun onItemClick(position: Int) {
-                Toast.makeText(this@MainActivity,"Clicked on $position",Toast.LENGTH_SHORT).show()
-                Log.i("Adapter","Clicked $position")
+        adapter.setOnItemClickListener(object: IncidentsRecyclerAdapter.OnItemClickListener {
+            override fun onItemClick(position: Int, selectedIncidentID: String) {
+//                Toast.makeText(this@MainActivity,"Clicked on $position",Toast.LENGTH_SHORT).show()
+//                Log.i("Adapter","Clicked $position")
             }
 
         })
 
         //longclick
-        adapter.setOnItemLongClickListener(object: MyAdapter.OnItemLongClickListener{
+        adapter.setOnItemLongClickListener(object: IncidentsRecyclerAdapter.OnItemLongClickListener {
             override fun onItemLongClick(position: Int, selectedIncidentID: String) {
 
                 selectedIncident = selectedIncidentID.toInt()
-                MyAdapter.OnSelectedIncident.selectedIncident = selectedIncident
+                IncidentsRecyclerAdapter.OnSelectedIncident.selectedIncident = selectedIncident
 
                 Toast.makeText(this@MainActivity,"Selected Incident $selectedIncidentID",Toast.LENGTH_SHORT).show()
 
-
-                //Alert Dialog Box
-//                val dialogBuilder = AlertDialog.Builder(this@MainActivity)
-//                dialogBuilder.setTitle("Long Click Received")
-//                dialogBuilder.setMessage("Position $position Long-Clicked")
-//                dialogBuilder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-//                    Toast.makeText(this@MainActivity,"OK Confirmed",Toast.LENGTH_SHORT).show()
-//                })
-//                dialogBuilder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-//                    dialog.dismiss()
-//                })
-//                    .show()
             }
         })
 

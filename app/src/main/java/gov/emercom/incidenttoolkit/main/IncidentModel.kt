@@ -1,4 +1,4 @@
-package gov.emercom.incidenttoolkit
+package gov.emercom.incidenttoolkit.main
 
 data class IncidentList (
     val incidentID: Int,
