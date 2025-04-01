@@ -1,7 +1,6 @@
 package gov.emercom.incidenttoolkit.incident
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
@@ -14,6 +13,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
 import gov.emercom.incidenttoolkit.main.IncidentList
 import gov.emercom.incidenttoolkit.main.MainActivity
 
@@ -71,11 +71,12 @@ class IncidentActivity : ComponentActivity() {
         }
         setTextFromArrayList(incidentRow)
 
+        //close incident button
         ivCloseIncident.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
                 val dialogBuilder = AlertDialog.Builder(this@IncidentActivity)
                 dialogBuilder.setTitle("Exit Incident")
-                dialogBuilder.setMessage("Confirm Exit")
+                dialogBuilder.setMessage("Return to Incident List")
                 dialogBuilder.setPositiveButton("Exit") { dialog, which ->
                     val intent = Intent(ivCloseIncident.context, MainActivity::class.java)
                     ivCloseIncident.context.startActivity(intent)
@@ -87,6 +88,28 @@ class IncidentActivity : ComponentActivity() {
             }
 
         })
+
+        val buttonList = listOf(
+            IncidentButton("Briefing","Incident Briefing\n(ICS 201)"),
+            IncidentButton("Objectives","Incident Objectives\n(ICS 202)"),
+            IncidentButton("OrgList","Organization Assignment List\n(ICS 203)"),
+            IncidentButton("AssignmentList","Assignment List\n(ICS 204)"),
+            IncidentButton("RadioPlan","Radio Communications Plan\n(ICS 205)"),
+            IncidentButton("CommList","Communications List\n(ICS 205A)"),
+            IncidentButton("MedicalPlan","Medical Plan\n(ICS 206)"),
+            IncidentButton("OrgChart","Organization Chart\n(ICS 207)"),
+            IncidentButton("SafetyPlan","Safety Plan\n(ICS 208)"),
+            IncidentButton("StatusSummary","Status Summary\n(ICS 209)"),
+            IncidentButton("ResourceStatus","Resource Status Change\n(ICS 210)"),
+            IncidentButton("CheckInList","Check-In List\n(ICS 211)"),
+            IncidentButton("Message","General Message\n(ICS 213)"),
+            IncidentButton("ResourceRequest","Resource Request Message\n(ICS 213RR)"),
+            IncidentButton("ActivityLog","Activity Log\n(ICS 214)"),
+            IncidentButton("CommResources","Comm Resource Worksheet\n(ICS 217A)")
+        )
+        recyclerView.layoutManager = GridLayoutManager(this,2)
+        val adapter = IncidentButtonsReyclerAdapter(buttonList)
+        recyclerView.adapter = adapter
     }
 
 }

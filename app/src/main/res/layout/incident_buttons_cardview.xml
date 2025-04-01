@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cvIncidentButtons"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardBackgroundColor="@color/obj_blue"
-    card_view:cardCornerRadius="5dp"
-    card_view:cardElevation="5dp"
-    card_view:cardUseCompatPadding="true">
+    card_view:cardCornerRadius="3dp"
+    card_view:cardElevation="0dp"
+    card_view:cardUseCompatPadding="true"
+    card_view:contentPadding="1dp">
 
-    <TextView
+    <Button
         android:id="@+id/tvCardButtonName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_gravity="center"
+        android:autoSizeMaxTextSize="20dp"
+        android:autoSizeMinTextSize="14dp"
+        android:autoSizeTextType="uniform"
+        android:background="@color/obj_blue"
         android:gravity="center"
+        android:padding="2dp"
         android:text="Incident Objectives\n(ICS 202)"
+        android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="20sp"
         android:textStyle="bold" />
 
 </androidx.cardview.widget.CardView>
