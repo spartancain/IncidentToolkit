@@ -27,7 +27,11 @@
         android:text="IncidentName2"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textStyle="bold"
+        app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="@+id/tvIncidentPageTitle"
+        app:layout_constraintEnd_toStartOf="@id/ivEditName"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintTop_toBottomOf="@+id/tvIncidentPageTitle" />
 
     <TextView
@@ -39,7 +43,11 @@
         android:text="IncidentLoc2"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textStyle="bold"
+        app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="@+id/tvIncidentPageTitle"
+        app:layout_constraintEnd_toStartOf="@id/ivEditLoc"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintTop_toBottomOf="@+id/tIncidentName2" />
 
     <ImageView
@@ -48,9 +56,25 @@
         android:layout_height="25dp"
         android:layout_marginStart="5dp"
         android:clickable="true"
+        android:src="@android:drawable/ic_menu_edit"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@+id/tIncidentName2"
-        app:layout_constraintStart_toEndOf="@+id/tIncidentName2"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+        app:layout_constraintEnd_toEndOf="@id/tIncidentID2"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/tIncidentName2" />
+
+    <ImageView
+        android:id="@+id/ivEditLoc"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="5dp"
+        android:clickable="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@+id/tIncidentLoc2"
+        app:layout_constraintStart_toEndOf="@+id/tIncidentLoc2"
+        app:layout_constraintEnd_toEndOf="@id/tIncidentID2"
+        app:layout_constraintHorizontal_bias="0"
+        android:src="@android:drawable/ic_menu_edit" />
 
     <ImageView
         android:id="@+id/ivCloseIncident"
@@ -61,18 +85,10 @@
         app:layout_constraintBottom_toBottomOf="@+id/tIncidentID2"
         app:layout_constraintEnd_toStartOf="@+id/tIncidentID2"
         app:layout_constraintTop_toTopOf="@+id/tIncidentID2"
-        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
         tools:visibility="visible" />
 
-    <ImageView
-        android:id="@+id/ivEditLoc"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="5dp"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="@+id/tIncidentLoc2"
-        app:layout_constraintStart_toEndOf="@+id/tIncidentLoc2"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+
 
     <TextView
         android:id="@+id/tIncidentID2"

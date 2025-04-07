@@ -3,6 +3,7 @@ package gov.emercom.incidenttoolkit.incident
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +12,8 @@ import gov.emercom.incidenttoolkit.R
 import gov.emercom.incidenttoolkit.DatabaseHelper
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
@@ -27,6 +30,11 @@ class IncidentActivity : ComponentActivity() {
     private lateinit var ivEditLoc: ImageView
     private lateinit var ivCloseIncident: ImageView
     private lateinit var recyclerView: RecyclerView
+    lateinit var dbh: DatabaseHelper
+    private lateinit var dialogTitle: TextView
+    private lateinit var etUpdateField: EditText
+    private lateinit var bPositive: Button
+    private lateinit var bNegative: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +42,9 @@ class IncidentActivity : ComponentActivity() {
         setContentView(R.layout.activity_incident)
 
         //Get selected incident ID from MainActivity and produce incident info array
-        val databaseHelper = DatabaseHelper(this@IncidentActivity)
+        val dbh = DatabaseHelper(this@IncidentActivity)
         val selectedIncidentID: Int = intent.getStringExtra("selectedIncidentID")!!.toInt()
-        val incidentRow = databaseHelper.getSelectedIncident(selectedIncidentID)
+        val incidentRow = dbh.getSelectedIncident(selectedIncidentID)
         Log.i("IncidentActivityDB","$incidentRow")
 
         //tie vars to layout items
@@ -48,6 +56,13 @@ class IncidentActivity : ComponentActivity() {
         ivEditLoc = findViewById(R.id.ivEditLoc)
         ivCloseIncident = findViewById(R.id.ivCloseIncident)
         recyclerView = findViewById(R.id.rvIncidentButtons)
+
+        //create resources for update dialog
+        val updateDialog = layoutInflater.inflate(R.layout.update_dialog, null)
+        dialogTitle = updateDialog.findViewById(R.id.tvDialogTitle)
+        etUpdateField = updateDialog.findViewById(R.id.etUpdateField)
+        bNegative = updateDialog.findViewById(R.id.bNegative)
+        bPositive = updateDialog.findViewById(R.id.bPositive)
 
         //apply incident info array to textview fields on layout
         fun setTextFromArrayList(arrayList: ArrayList<IncidentList>) {
@@ -87,6 +102,38 @@ class IncidentActivity : ComponentActivity() {
                     .show()
             }
 
+        })
+
+        //Edit field buttons
+        ivEditName.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+                val dialogBuilder = AlertDialog.Builder(this@IncidentActivity)
+                dialogBuilder.setView(updateDialog)
+                dialogTitle.text = "Update Incident Name"
+                etUpdateField.setHint(tIncidentName2.text)
+                etUpdateField.setText(tIncidentName2.text)
+                etUpdateField.setAutofillHints(tIncidentName2.text.toString())
+
+                bPositive.setOnClickListener(object: View.OnClickListener{
+                    override fun onClick(v: View?) {
+                        dbh.updateIncidentField(
+                            keyColumn = "COLUMN_ID",
+                            keyValue = selectedIncidentID.toString(),
+                            targetColumn = "INCIDENT_NAME",
+                            targetValue = etUpdateField.text.toString()
+                        )
+                        Toast.makeText(this@IncidentActivity,"Updated",Toast.LENGTH_SHORT).show()
+                    }
+                })
+
+                bNegative.setOnClickListener(object: View.OnClickListener {
+                    override fun onClick(v: View?) {
+                        Toast.makeText(this@IncidentActivity,"Cancelled",Toast.LENGTH_SHORT).show()
+                    }
+                })
+
+                dialogBuilder.show()
+            }
         })
 
         val buttonList = listOf(

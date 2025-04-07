@@ -58,13 +58,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         }
         val insert = db.insert(INCIDENT_TABLE, null, values)
         return insert.toInt() != -1
+        db.close()
     }
 
     //called by displayIncident@MainActivity for RecyclerView
     fun getIncidentList(): Cursor {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $INCIDENT_TABLE ORDER BY $COL_ID DESC",null)
-
         return cursor
     }
 
@@ -78,13 +78,23 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         return returnList
     }
 
+
     fun deleteIncident(incident: Int): Boolean {
         //find model in DB, if found delete and return true. If not found, return false.
         val db = this.writableDatabase
         val queryString = "DELETE FROM $INCIDENT_TABLE WHERE $COL_ID = $incident"
-
         val cursor = db.rawQuery(queryString, null)
         return cursor.moveToFirst()
+        cursor.close()
+        db.close()
+    }
+
+    fun updateIncidentField(keyColumn: String, keyValue: String, targetColumn: String, targetValue: String) {
+        val db = this.writableDatabase
+        val queryString = "UPDATE $INCIDENT_TABLE SET $targetColumn = $targetValue WHERE $keyColumn = $keyValue"
+        val update = db.execSQL(queryString)
+        return update
+        db.close()
     }
 
     fun getSelectedIncident(incident: Int): ArrayList<IncidentList> {

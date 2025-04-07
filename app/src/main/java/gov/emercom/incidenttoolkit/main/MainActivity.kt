@@ -28,7 +28,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var acIncidentType: AutoCompleteTextView
     private lateinit var acIncidentLoc: AutoCompleteTextView
     private lateinit var recyclerView: RecyclerView
-    private lateinit var db: DatabaseHelper
     lateinit var dbh: DatabaseHelper
     private lateinit var newArray: ArrayList<IncidentList>
     private var selectedIncident: Int = -1
@@ -47,19 +46,19 @@ class MainActivity : ComponentActivity() {
         recyclerView = findViewById(R.id.rvIncidentList)
 
 
-        //Autofill Hints?? Not working yet but it aint broke the fucker so it stays
-        val databaseHelper = DatabaseHelper(this@MainActivity)
-        val incidentTypes = databaseHelper.getIncidentTypes().toString()
-        acIncidentType.setAutofillHints(incidentTypes)
 
         //Recycler definitions
-        db = DatabaseHelper(this)
         dbh = DatabaseHelper(this)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
         displayIncident()
         //initialize newArray for onclicklistener in recyclerview
         newArray = arrayListOf<IncidentList>()
+
+
+        //Autofill Hints?? Not working yet but it aint broke the fucker so it stays
+        val incidentTypes = dbh.getIncidentTypes().toString()
+        acIncidentType.setAutofillHints(incidentTypes)
 
 
         //Button listeners
