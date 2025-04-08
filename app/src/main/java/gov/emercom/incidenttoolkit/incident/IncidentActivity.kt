@@ -1,6 +1,7 @@
 package gov.emercom.incidenttoolkit.incident
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -12,6 +13,7 @@ import gov.emercom.incidenttoolkit.R
 import gov.emercom.incidenttoolkit.DatabaseHelper
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -59,10 +61,10 @@ class IncidentActivity : ComponentActivity() {
 
         //create resources for update dialog
         val updateDialog = layoutInflater.inflate(R.layout.update_dialog, null)
-        dialogTitle = updateDialog.findViewById(R.id.tvDialogTitle)
-        etUpdateField = updateDialog.findViewById(R.id.etUpdateField)
-        bNegative = updateDialog.findViewById(R.id.bNegative)
-        bPositive = updateDialog.findViewById(R.id.bPositive)
+//        dialogTitle = updateDialog.findViewById(R.id.tvDialogTitle)
+          etUpdateField = updateDialog.findViewById(R.id.etUpdateField)
+//        bNegative = updateDialog.findViewById(R.id.bNegative)
+//        bPositive = updateDialog.findViewById(R.id.bPositive)
 
         //apply incident info array to textview fields on layout
         fun setTextFromArrayList(arrayList: ArrayList<IncidentList>) {
@@ -107,8 +109,8 @@ class IncidentActivity : ComponentActivity() {
         //Edit field buttons
         ivEditName.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
-                val dialogBuilder = AlertDialog.Builder(this@IncidentActivity)
-                dialogBuilder.setView(updateDialog)
+                /*val dialog = Dialog(this@IncidentActivity)
+                dialog.setContentView(updateDialog)
                 dialogTitle.text = "Update Incident Name"
                 etUpdateField.setHint(tIncidentName2.text)
                 etUpdateField.setText(tIncidentName2.text)
@@ -116,23 +118,41 @@ class IncidentActivity : ComponentActivity() {
 
                 bPositive.setOnClickListener(object: View.OnClickListener{
                     override fun onClick(v: View?) {
+                        val incidentNameText = etUpdateField.text.toString()
                         dbh.updateIncidentField(
                             keyColumn = "COLUMN_ID",
                             keyValue = selectedIncidentID.toString(),
                             targetColumn = "INCIDENT_NAME",
-                            targetValue = etUpdateField.text.toString()
+                            targetValue = incidentNameText
                         )
                         Toast.makeText(this@IncidentActivity,"Updated",Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
                     }
                 })
 
                 bNegative.setOnClickListener(object: View.OnClickListener {
                     override fun onClick(v: View?) {
                         Toast.makeText(this@IncidentActivity,"Cancelled",Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
                     }
                 })
+                dialog.show()*/
 
-                dialogBuilder.show()
+                val dbh = DatabaseHelper(this@IncidentActivity)
+                etUpdateField.setHint(tIncidentName2.text)
+                etUpdateField.setText(tIncidentName2.text.toString())
+                etUpdateField.setAutofillHints(tIncidentName2.text.toString())
+                val incidentNameText = etUpdateField.text.toString()
+                val dialog = UpdateDialog(
+                    this@IncidentActivity,
+                    "Update Incident Name",
+                    "INCIDENT_NAME",
+                    incidentNameText,
+                    "COLUMN_ID",
+                    selectedIncidentID.toString(),
+                    dbh
+                )
+                dialog.show()
             }
         })
 
