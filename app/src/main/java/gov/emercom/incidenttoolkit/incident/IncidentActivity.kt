@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import gov.emercom.incidenttoolkit.main.IncidentList
 import gov.emercom.incidenttoolkit.main.MainActivity
 
+
+
 class IncidentActivity : ComponentActivity() {
 
     private lateinit var tIncidentName2: TextView
@@ -37,6 +39,27 @@ class IncidentActivity : ComponentActivity() {
     private lateinit var etUpdateField: EditText
     private lateinit var bPositive: Button
     private lateinit var bNegative: Button
+
+    //apply incident info array to textview fields on layout
+    fun setTextFromArrayList(arrayList: ArrayList<IncidentList>) {
+        if (arrayList.isNotEmpty() ){
+            val array = arrayList[0]
+            val incidentID = array.incidentID
+            val incidentName = array.incidentName
+            val incidentLoc = array.incidentLoc
+            val incidentType = array.incidentType
+            val incidentStart = array.incidentStartDTG
+            tIncidentID2.text = incidentID.toString()
+            tIncidentName2.text = incidentName
+            tIncidentLoc2.text = incidentLoc
+            tIncidentStart2.text = incidentStart
+        } else {
+            tIncidentID2.text = "UU"
+            tIncidentName2.text = getString(R.string.error_out_bounds)
+            tIncidentLoc2.text = getString(R.string.error_out_bounds)
+            tIncidentStart2.text = getString(R.string.error_out_bounds)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,12 +84,9 @@ class IncidentActivity : ComponentActivity() {
 
         //create resources for update dialog
         val updateDialog = layoutInflater.inflate(R.layout.update_dialog, null)
-//        dialogTitle = updateDialog.findViewById(R.id.tvDialogTitle)
           etUpdateField = updateDialog.findViewById(R.id.etUpdateField)
-//        bNegative = updateDialog.findViewById(R.id.bNegative)
-//        bPositive = updateDialog.findViewById(R.id.bPositive)
 
-        //apply incident info array to textview fields on layout
+ /*       //apply incident info array to textview fields on layout
         fun setTextFromArrayList(arrayList: ArrayList<IncidentList>) {
             if (arrayList.isNotEmpty() ){
                 val array = arrayList[0]
@@ -85,7 +105,7 @@ class IncidentActivity : ComponentActivity() {
                 tIncidentLoc2.text = getString(R.string.error_out_bounds)
                 tIncidentStart2.text = getString(R.string.error_out_bounds)
             }
-        }
+        }*/
         setTextFromArrayList(incidentRow)
 
         //close incident button
@@ -109,35 +129,6 @@ class IncidentActivity : ComponentActivity() {
         //Edit field buttons
         ivEditName.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
-                /*val dialog = Dialog(this@IncidentActivity)
-                dialog.setContentView(updateDialog)
-                dialogTitle.text = "Update Incident Name"
-                etUpdateField.setHint(tIncidentName2.text)
-                etUpdateField.setText(tIncidentName2.text)
-                etUpdateField.setAutofillHints(tIncidentName2.text.toString())
-
-                bPositive.setOnClickListener(object: View.OnClickListener{
-                    override fun onClick(v: View?) {
-                        val incidentNameText = etUpdateField.text.toString()
-                        dbh.updateIncidentField(
-                            keyColumn = "COLUMN_ID",
-                            keyValue = selectedIncidentID.toString(),
-                            targetColumn = "INCIDENT_NAME",
-                            targetValue = incidentNameText
-                        )
-                        Toast.makeText(this@IncidentActivity,"Updated",Toast.LENGTH_SHORT).show()
-                        dialog.dismiss()
-                    }
-                })
-
-                bNegative.setOnClickListener(object: View.OnClickListener {
-                    override fun onClick(v: View?) {
-                        Toast.makeText(this@IncidentActivity,"Cancelled",Toast.LENGTH_SHORT).show()
-                        dialog.dismiss()
-                    }
-                })
-                dialog.show()*/
-
                 val dbh = DatabaseHelper(this@IncidentActivity)
                 etUpdateField.setHint(tIncidentName2.text)
                 etUpdateField.setText(tIncidentName2.text.toString())
@@ -177,6 +168,25 @@ class IncidentActivity : ComponentActivity() {
         recyclerView.layoutManager = GridLayoutManager(this,2)
         val adapter = IncidentButtonsReyclerAdapter(buttonList)
         recyclerView.adapter = adapter
+
     }
+
+/*    override fun onResume() {
+        super.onResume()
+        val dbh = DatabaseHelper(this@IncidentActivity)
+        val selectedIncidentID: Int = intent.getStringExtra("selectedIncidentID")!!.toInt()
+        val incidentRow = dbh.getSelectedIncident(selectedIncidentID)
+        setTextFromArrayList(incidentRow)
+        Log.i("IncidentResume","Resumed for $incidentRow")
+    }*/
+
+    fun onDialogClosed(){
+        val dbh = DatabaseHelper(this@IncidentActivity)
+        val selectedIncidentID: Int = intent.getStringExtra("selectedIncidentID")!!.toInt()
+        val incidentRow = dbh.getSelectedIncident(selectedIncidentID)
+        setTextFromArrayList(incidentRow)
+        Log.i("onDialogClosed","Post dialog refresh for $incidentRow")
+    }
+
 
 }

@@ -91,7 +91,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
 
     fun updateIncidentField(keyColumn: String, keyValue: String, targetColumn: String, targetValue: String) {
         val db = this.writableDatabase
-        val queryString = "UPDATE $INCIDENT_TABLE SET $targetColumn = '$targetValue' WHERE $keyColumn = '$keyValue'"
+        val queryString = "UPDATE $INCIDENT_TABLE SET $targetColumn='$targetValue' WHERE $keyColumn='$keyValue'"
+        Log.i("updateIncidentField",queryString)
         db.execSQL(queryString)
         db.close()
     }
