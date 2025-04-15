@@ -27,7 +27,7 @@
             android:name=".incident.IncidentActivity"
             android:parentActivityName=".main.MainActivity"
             android:exported="false"
-            android:label="Incident View"
+            android:label="Incident"
             android:theme="@style/Theme.AppCompat"
             android:finishOnTaskLaunch="true"
             >

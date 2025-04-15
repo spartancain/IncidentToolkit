@@ -18,13 +18,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import gov.emercom.incidenttoolkit.main.IncidentList
 import gov.emercom.incidenttoolkit.main.MainActivity
 
+interface DialogListener {
+    fun onDialogClose()
+}
 
-
-class IncidentActivity : ComponentActivity() {
+class IncidentActivity : AppCompatActivity(), DialogListener {
 
     private lateinit var tIncidentName2: TextView
     private lateinit var tIncidentLoc2: TextView
@@ -34,11 +37,7 @@ class IncidentActivity : ComponentActivity() {
     private lateinit var ivEditLoc: ImageView
     private lateinit var ivCloseIncident: ImageView
     private lateinit var recyclerView: RecyclerView
-    lateinit var dbh: DatabaseHelper
-    private lateinit var dialogTitle: TextView
     private lateinit var etUpdateField: EditText
-    private lateinit var bPositive: Button
-    private lateinit var bNegative: Button
 
     //apply incident info array to textview fields on layout
     fun setTextFromArrayList(arrayList: ArrayList<IncidentList>) {
@@ -86,26 +85,6 @@ class IncidentActivity : ComponentActivity() {
         val updateDialog = layoutInflater.inflate(R.layout.update_dialog, null)
           etUpdateField = updateDialog.findViewById(R.id.etUpdateField)
 
- /*       //apply incident info array to textview fields on layout
-        fun setTextFromArrayList(arrayList: ArrayList<IncidentList>) {
-            if (arrayList.isNotEmpty() ){
-                val array = arrayList[0]
-                val incidentID = array.incidentID
-                val incidentName = array.incidentName
-                val incidentLoc = array.incidentLoc
-                val incidentType = array.incidentType
-                val incidentStart = array.incidentStartDTG
-                tIncidentID2.text = incidentID.toString()
-                tIncidentName2.text = incidentName
-                tIncidentLoc2.text = incidentLoc
-                tIncidentStart2.text = incidentStart
-            } else {
-                tIncidentID2.text = "UU"
-                tIncidentName2.text = getString(R.string.error_out_bounds)
-                tIncidentLoc2.text = getString(R.string.error_out_bounds)
-                tIncidentStart2.text = getString(R.string.error_out_bounds)
-            }
-        }*/
         setTextFromArrayList(incidentRow)
 
         //close incident button
@@ -129,7 +108,6 @@ class IncidentActivity : ComponentActivity() {
         //Edit field buttons
         ivEditName.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
-                val dbh = DatabaseHelper(this@IncidentActivity)
                 etUpdateField.setHint(tIncidentName2.text)
                 etUpdateField.setText(tIncidentName2.text.toString())
                 etUpdateField.setAutofillHints(tIncidentName2.text.toString())
@@ -141,9 +119,28 @@ class IncidentActivity : ComponentActivity() {
                     incidentNameText,
                     "COLUMN_ID",
                     selectedIncidentID.toString(),
-                    dbh
+                    this@IncidentActivity
                 )
-                dialog.show()
+                dialog.show(supportFragmentManager, "UpdateDialog")
+            }
+        })
+
+        ivEditLoc.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+                etUpdateField.setHint(tIncidentLoc2.text)
+                etUpdateField.setText(tIncidentLoc2.text.toString())
+                etUpdateField.setAutofillHints(tIncidentLoc2.text.toString())
+                val incidentLocText = etUpdateField.text.toString()
+                val dialog = UpdateDialog(
+                    this@IncidentActivity,
+                    "Update Incident Name",
+                    "INCIDENT_LOC",
+                    incidentLocText,
+                    "COLUMN_ID",
+                    selectedIncidentID.toString(),
+                    this@IncidentActivity
+                )
+                dialog.show(supportFragmentManager, "UpdateDialog")
             }
         })
 
@@ -171,16 +168,7 @@ class IncidentActivity : ComponentActivity() {
 
     }
 
-/*    override fun onResume() {
-        super.onResume()
-        val dbh = DatabaseHelper(this@IncidentActivity)
-        val selectedIncidentID: Int = intent.getStringExtra("selectedIncidentID")!!.toInt()
-        val incidentRow = dbh.getSelectedIncident(selectedIncidentID)
-        setTextFromArrayList(incidentRow)
-        Log.i("IncidentResume","Resumed for $incidentRow")
-    }*/
-
-    fun onDialogClosed(){
+    override fun onDialogClose(){
         val dbh = DatabaseHelper(this@IncidentActivity)
         val selectedIncidentID: Int = intent.getStringExtra("selectedIncidentID")!!.toInt()
         val incidentRow = dbh.getSelectedIncident(selectedIncidentID)

@@ -1,19 +1,18 @@
 package gov.emercom.incidenttoolkit.incident
 
-import android.app.Dialog
 import android.content.Context
-import android.content.Intent
+import android.content.DialogInterface
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
 import gov.emercom.incidenttoolkit.DatabaseHelper
 import gov.emercom.incidenttoolkit.R
-import gov.emercom.incidenttoolkit.incident.IncidentActivity
-import gov.emercom.incidenttoolkit.main.MainActivity
-import gov.emercom.incidenttoolkit.ui.theme.IncidentToolkitTheme
 
 class UpdateDialog(
     context: Context,
@@ -22,23 +21,27 @@ class UpdateDialog(
     val targetValue: String,
     val keyColumn: String,
     val keyValue: String,
-    dbh: DatabaseHelper
-): Dialog(context){
+    private val listener: DialogListener
+): DialogFragment(){
     private lateinit var dialogTitle: TextView
     private lateinit var bPositive: Button
     private lateinit var bNegative: Button
     private lateinit var etUpdate: EditText
     lateinit var dbh: DatabaseHelper
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.update_dialog)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.update_dialog,container,false )
 
-        dbh = DatabaseHelper(context)
-        dialogTitle = findViewById(R.id.tvDialogTitle)
-        etUpdate = findViewById(R.id.etUpdateField)
-        bNegative = findViewById(R.id.bNegative)
-        bPositive = findViewById(R.id.bPositive)
+        dbh = DatabaseHelper(requireContext())
+        dialogTitle = view.findViewById(R.id.tvDialogTitle)
+        etUpdate = view.findViewById(R.id.etUpdateField)
+        bNegative = view.findViewById(R.id.bNegative)
+        bPositive = view.findViewById(R.id.bPositive)
+
 
         dialogTitle.text = updateTitle
         etUpdate.setText(targetValue)
@@ -52,7 +55,6 @@ class UpdateDialog(
                     targetValue = etUpdate.text.toString()
                 )
                 Toast.makeText(v?.context, "Updated", Toast.LENGTH_SHORT).show()
-                (ownerActivity as? IncidentActivity)?.onDialogClosed()
                 dismiss()
             }
         })
@@ -63,6 +65,12 @@ class UpdateDialog(
                 dismiss()
             }
         })
+
+        return view
     }
 
+    override fun onDismiss(dialog: DialogInterface){
+        super.onDismiss(dialog)
+        listener.onDialogClose()
+    }
 }
