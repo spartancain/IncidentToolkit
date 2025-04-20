@@ -80,45 +80,46 @@ class MainActivity : ComponentActivity() {
                     incidentStartDTG.toString()
                 )
 
+                if (incidentName.length > 2 && incidentType.length > 2 && incidentLoc.length > 2) {
+                    try {
+                        val newIncident = IncidentList(
+                            -1,
+                            ptIncidentName.text.toString(),
+                            acIncidentType.text.toString(),
+                            acIncidentLoc.text.toString(),
+                            incidentStart.toLong(),
+                            incidentStartDTG.toString()
+                        )
+                        ptIncidentName.text = ""
+                        acIncidentType.setText("")
+                        acIncidentLoc.setText("")
 
-                try {
-                    val newIncident = IncidentList(
-                        -1,
-                        ptIncidentName.text.toString(),
-                        acIncidentType.text.toString(),
-                        acIncidentLoc.text.toString(),
-                        incidentStart.toLong(),
-                        incidentStartDTG.toString()
-                    )
-                    ptIncidentName.text = ""
-                    acIncidentType.setText("")
-                    acIncidentLoc.setText("")
+                        val success: Boolean = dbh.insertIncident(incident)
+                        val toast = Toast.makeText(this@MainActivity, "Incident Creation $success",Toast.LENGTH_SHORT)
+                        toast.show()
+
+                    } catch (e: Exception) {
+                        val newIncident = IncidentList(
+                            -1,
+                            "Error",
+                            "No Type",
+                            "No Loc",
+                            -1,
+                            (-1).toString()
+                        )
+
+
+                        val toast = Toast.makeText(
+                            this@MainActivity,
+                            "Error Submitting Incident",
+                            Toast.LENGTH_SHORT
+                        )
+                        toast.show()
+                    }
                 }
-
-                catch (e: Exception) {
-                    val newIncident = IncidentList(
-                        -1,
-                        "Error",
-                        "No Type",
-                        "No Loc",
-                        -1,
-                        (-1).toString()
-                    )
-
-
-                    val toast = Toast.makeText(
-                        this@MainActivity,
-                        "Error Submitting Incident",
-                        Toast.LENGTH_SHORT
-                    )
-                    toast.show()
+                else {
+                    Toast.makeText(this@MainActivity,"A value is too short! (3 Characters Minimum)",Toast.LENGTH_SHORT).show()
                 }
-
-                val databaseHelper = DatabaseHelper(this@MainActivity)
-
-                val success: Boolean = databaseHelper.insertIncident(incident)
-                val toast = Toast.makeText(this@MainActivity, "Incident Creation $success",Toast.LENGTH_SHORT)
-                toast.show()
 
                 displayIncident()
             }

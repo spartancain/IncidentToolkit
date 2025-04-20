@@ -135,7 +135,7 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
                 val incidentLocText = etUpdateField.text.toString()
                 val dialog = UpdateDialog(
                     this@IncidentActivity,
-                    "Update Incident Name",
+                    "Update Incident Location",
                     "INCIDENT_LOC",
                     incidentLocText,
                     "COLUMN_ID",

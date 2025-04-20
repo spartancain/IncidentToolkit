@@ -48,14 +48,19 @@ class UpdateDialog(
 
         bPositive.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                dbh.updateIncidentField(
-                    keyColumn = keyColumn,
-                    keyValue = keyValue,
-                    targetColumn = targetColumn,
-                    targetValue = etUpdate.text.toString()
-                )
-                Toast.makeText(v?.context, "Updated", Toast.LENGTH_SHORT).show()
-                dismiss()
+                val updateValue = etUpdate.text.toString()
+                if (updateValue.length > 2) {
+                    dbh.updateIncidentField(
+                        keyColumn = keyColumn,
+                        keyValue = keyValue,
+                        targetColumn = targetColumn,
+                        targetValue = updateValue
+                    )
+                    Toast.makeText(v?.context, "Updated", Toast.LENGTH_SHORT).show()
+                    dismiss()
+                } else {
+                    Toast.makeText(v?.context,"Value too short!",Toast.LENGTH_SHORT).show()
+                }
             }
         })
 
