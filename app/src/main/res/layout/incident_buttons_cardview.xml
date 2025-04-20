@@ -21,6 +21,8 @@
         android:background="@color/obj_blue"
         android:gravity="center"
         android:padding="2dp"
+        android:clickable="true"
+        android:focusable="true"
         android:text="Incident Objectives\n(ICS 202)"
         android:textAlignment="center"
         android:textColor="@android:color/white"

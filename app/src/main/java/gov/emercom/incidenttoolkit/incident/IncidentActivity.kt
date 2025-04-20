@@ -2,6 +2,7 @@ package gov.emercom.incidenttoolkit.incident
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -38,6 +39,7 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
     private lateinit var ivCloseIncident: ImageView
     private lateinit var recyclerView: RecyclerView
     private lateinit var etUpdateField: EditText
+    var activityIncidentID: Int = -1
 
     //apply incident info array to textview fields on layout
     fun setTextFromArrayList(arrayList: ArrayList<IncidentList>) {
@@ -67,9 +69,9 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
 
         //Get selected incident ID from MainActivity and produce incident info array
         val dbh = DatabaseHelper(this@IncidentActivity)
-        val selectedIncidentID: Int = intent.getStringExtra("selectedIncidentID")!!.toInt()
-        val incidentRow = dbh.getSelectedIncident(selectedIncidentID)
-        Log.i("IncidentActivityDB","$incidentRow")
+        activityIncidentID = intent.getStringExtra("selectedIncidentID")!!.toInt()
+        val incidentRow = dbh.getSelectedIncident(activityIncidentID)
+        //Log.i("IncidentActivityDB","$incidentRow")
 
         //tie vars to layout items
         tIncidentName2 = findViewById(R.id.tIncidentName2)
@@ -118,7 +120,7 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
                     "INCIDENT_NAME",
                     incidentNameText,
                     "COLUMN_ID",
-                    selectedIncidentID.toString(),
+                    activityIncidentID.toString(),
                     this@IncidentActivity
                 )
                 dialog.show(supportFragmentManager, "UpdateDialog")
@@ -137,7 +139,7 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
                     "INCIDENT_LOC",
                     incidentLocText,
                     "COLUMN_ID",
-                    selectedIncidentID.toString(),
+                    activityIncidentID.toString(),
                     this@IncidentActivity
                 )
                 dialog.show(supportFragmentManager, "UpdateDialog")
@@ -145,7 +147,7 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
         })
 
         val buttonList = listOf(
-            IncidentButton("Briefing","Incident Briefing\n(ICS 201)"),
+            IncidentButton("IncidentBriefingActivity","Incident Briefing\n(ICS 201)"),
             IncidentButton("Objectives","Incident Objectives\n(ICS 202)"),
             IncidentButton("OrgList","Organization Assignment List\n(ICS 203)"),
             IncidentButton("AssignmentList","Assignment List\n(ICS 204)"),
@@ -163,8 +165,37 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
             IncidentButton("CommResources","Comm Resource Worksheet\n(ICS 217A)")
         )
         recyclerView.layoutManager = GridLayoutManager(this,2)
-        val adapter = IncidentButtonsReyclerAdapter(buttonList)
+        val adapter = IncidentButtonsReyclerAdapter(
+            buttonList,
+            activityIncidentID.toInt()
+        )
         recyclerView.adapter = adapter
+        Log.i("adapterCreatorIncidentID",activityIncidentID.toString())
+
+        adapter.setOnItemClickListener(object: IncidentButtonsReyclerAdapter.OnItemClickListener{
+            override fun onItemClick(position: Int, selectedActivity: String) {
+                lateinit var intent: Intent
+                try {
+                    when (position) {
+                        0 -> {intent = Intent(this@IncidentActivity, IncidentBriefingActivity::class.java)}
+                        else -> {intent = Intent(this@IncidentActivity, selectedActivity::class.java)}
+                    }
+                    intent.putExtra("selectedIncidentID", activityIncidentID)
+                    val incidentIDCheckValue = intent.getIntExtra("selectedIncidentID",-1)
+                    if (incidentIDCheckValue > -1){
+                        startActivity(intent)
+                    }
+                } catch (e: ActivityNotFoundException){
+                    Log.i("intentClick",intent.toString())
+                    Toast.makeText(this@IncidentActivity, "Activity Not Found!", Toast.LENGTH_SHORT).show()
+                    e.printStackTrace()
+                }
+            }
+
+        })
+
+        //Hide the AppCompatActivity top action bar
+        supportActionBar?.hide()
 
     }
 

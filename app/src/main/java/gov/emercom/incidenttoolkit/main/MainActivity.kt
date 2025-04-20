@@ -51,7 +51,6 @@ class MainActivity : ComponentActivity() {
         dbh = DatabaseHelper(this)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
-        displayIncident()
         //initialize newArray for onclicklistener in recyclerview
         newArray = arrayListOf<IncidentList>()
 
@@ -176,10 +175,11 @@ class MainActivity : ComponentActivity() {
 
 
         })
-
+        displayIncident()
     }
 
     //Incident display updater for RecyclerView
+
     fun displayIncident() {
         val newCursor: Cursor = dbh.getIncidentList()
         newArray = ArrayList<IncidentList>()

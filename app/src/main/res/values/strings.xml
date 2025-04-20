@@ -10,4 +10,5 @@
     <string name="delete">Delete Record</string>
     <string name="tvIncidentPageTitle">Incident</string>
     <string name="error_out_bounds">Error: Out of Bounds</string>
+    <string name="tvIncidentBriefingTitle">Incident Briefing</string>
 </resources>

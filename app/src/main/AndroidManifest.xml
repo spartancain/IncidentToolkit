@@ -32,6 +32,15 @@
             android:finishOnTaskLaunch="true"
             >
         </activity>
+        <activity
+            android:name=".incident.IncidentBriefingActivity"
+            android:parentActivityName=".incident.IncidentActivity"
+            android:exported="false"
+            android:label="Incident Briefing (ICS 201)"
+            android:theme="@style/Theme.AppCompat"
+            android:finishOnTaskLaunch="true"
+            >
+        </activity>
     </application>
 
 </manifest>
