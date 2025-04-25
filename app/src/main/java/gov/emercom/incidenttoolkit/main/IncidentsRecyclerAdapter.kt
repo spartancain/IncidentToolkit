@@ -116,9 +116,9 @@ class IncidentsRecyclerAdapter (val incidentList: ArrayList<IncidentList>): Recy
         holder.tIncidentLoc?.text = currentIncident.incidentLoc
         holder.tIncidentStart.text = currentIncident.incidentStartDTG.toString()
 
-        val itemView = holder.itemView
+        holder.itemView
 
-        val selectedItem = selectedIncident.toString().toInt()
+        selectedIncident.toString().toInt()
 
         selectedIncident = holder.absoluteAdapterPosition
 

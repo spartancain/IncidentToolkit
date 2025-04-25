@@ -1,12 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/tIncidentStart3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:paddingStart="10dp"
+                android:text="23MAR25 1100:21z"
+                android:textAlignment="textEnd"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/tIncidentName3"
+                app:layout_constraintTop_toBottomOf="@+id/tIncidentName3" />
+
+            <ImageView
+                android:id="@+id/ivIncidentMapImage"
+                android:layout_width="400dp"
+                android:layout_height="350dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvIncidentMapImageTitle"
+                tools:src="@drawable/incident_map_image_default" />
 
             <TextView
                 android:id="@+id/tvIncidentBriefingTitle"
@@ -62,6 +86,26 @@
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
                 app:layout_constraintTop_toBottomOf="@+id/tvIncidentBriefingTitle" />
+
+            <TextView
+                android:id="@+id/tvIncidentMapImageTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:paddingStart="10dp"
+                android:text="Incident Map / Sketch:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/tIncidentStart3"
+                app:layout_constraintTop_toBottomOf="@+id/tIncidentStart3" />
+
+            <Button
+                android:id="@+id/bSelectMapImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Map Image"
+                app:layout_constraintBottom_toTopOf="@+id/ivIncidentMapImage"
+                app:layout_constraintEnd_toEndOf="@+id/ivIncidentMapImage" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

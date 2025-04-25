@@ -5,12 +5,17 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
 import gov.emercom.incidenttoolkit.main.IncidentList
 import java.time.Instant
 import kotlin.apply
 import android.util.Log
+import android.graphics.BitmapFactory
+import java.io.ByteArrayOutputStream
+import kotlin.collections.toByteArray
 
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db", null, 3) {
+class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db", null, 5) {
 
     //Incident Table Values
     val INCIDENT_TABLE = "INCIDENT_TABLE"
@@ -28,6 +33,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
     val COL_SAFETYPLANLOC = "SAFETYPLANLOC"
     val COL_RAD_INSTRUCTIONS = "RAD_INSTRUCTIONS"
     val COL_INCIDENT_REF = "INCIDENT_REF"
+    val COL_INCIDENT_MAPIMAGE = "INCIDENT_MAPIMAGE"
 
     //Organisation Table Values
     val ORGANISATION_TABLE = "ORGANISATION_TABLE"
@@ -95,7 +101,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
             append(COL_RAD_INSTRUCTIONS)
             append(" TEXT, ")
             append(COL_INCIDENT_REF)
-            append(" TEXT)")
+            append(" TEXT, ")
+            append(COL_INCIDENT_MAPIMAGE)
+            append(" BLOB)")
         }
         Log.i("IncidentTableCreator",incidentTableCreator)
         db?.execSQL(incidentTableCreator)
@@ -268,5 +276,35 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         return incidentArray
     }
 
+    fun updateIncidentMapImage(keyColumn: String, keyValue: String, targetColumn: String, targetImage: Bitmap) {
+        val db = this.writableDatabase
+        val targetArray2 = bitmapToByteArray(targetImage)
+        val queryString = "UPDATE $INCIDENT_TABLE SET $targetColumn = '$targetArray2' WHERE $keyColumn = '$keyValue'"
+        db.execSQL(queryString)
+        Log.i("updateIncidentMapImage",targetArray2.size.toString())
+        Log.i("updateIncidentMapImage", targetArray2.toString())
+        db.close()
+    }
+
+    fun bitmapToByteArray(bitmap: Bitmap, format: CompressFormat = CompressFormat.PNG, quality: Int = 100): ByteArray {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(format, quality, stream)
+        return stream.toByteArray()
+    }
+
+    fun getIncidentMapImage(keyColumn: String, keyValue: String): Bitmap? {
+        val db = this.readableDatabase
+        val queryString = "SELECT $COL_INCIDENT_MAPIMAGE FROM $INCIDENT_TABLE WHERE $keyColumn = $keyValue"
+        val cursor = db.rawQuery(queryString, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val byteArray = it.getBlob(it.getColumnIndexOrThrow(COL_INCIDENT_MAPIMAGE))
+                byteArray?.let {
+                    return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+                }
+            }
+        }
+        return null
+    }
 
 }

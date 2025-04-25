@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
 
                 if (incidentName.length > 2 && incidentType.length > 2 && incidentLoc.length > 2) {
                     try {
-                        val newIncident = IncidentList(
+                        IncidentList(
                             -1,
                             ptIncidentName.text.toString(),
                             acIncidentType.text.toString(),
@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
                         toast.show()
 
                     } catch (e: Exception) {
-                        val newIncident = IncidentList(
+                        IncidentList(
                             -1,
                             "Error",
                             "No Type",

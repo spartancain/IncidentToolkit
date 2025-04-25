@@ -48,7 +48,7 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
             val incidentID = array.incidentID
             val incidentName = array.incidentName
             val incidentLoc = array.incidentLoc
-            val incidentType = array.incidentType
+            array.incidentType
             val incidentStart = array.incidentStartDTG
             tIncidentID2.text = incidentID.toString()
             tIncidentName2.text = incidentName
