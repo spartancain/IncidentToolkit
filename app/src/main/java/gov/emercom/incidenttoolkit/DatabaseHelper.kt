@@ -7,13 +7,13 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat
-import gov.emercom.incidenttoolkit.main.IncidentList
-import java.time.Instant
-import kotlin.apply
-import android.util.Log
+import android.graphics.Bitmap.createBitmap
 import android.graphics.BitmapFactory
+import android.util.Log
+import gov.emercom.incidenttoolkit.main.IncidentGetList
+import gov.emercom.incidenttoolkit.main.IncidentPutList
 import java.io.ByteArrayOutputStream
-import kotlin.collections.toByteArray
+import java.time.Instant
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db", null, 5) {
 
@@ -74,38 +74,38 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
             append("CREATE TABLE ")
             append(INCIDENT_TABLE)
             append("(")
-            append(COL_ID)
+            append(COL_ID) //COL 0
             append(" INTEGER PRIMARY KEY AUTOINCREMENT, ")
-            append(COL_INCIDENT_NAME)
+            append(COL_INCIDENT_NAME) //COL 1
             append(" TEXT, ")
-            append(COL_INCIDENT_TYPE)
+            append(COL_INCIDENT_TYPE) //COL 2
             append(" TEXT, ")
-            append(COL_INCIDENT_LOC)
+            append(COL_INCIDENT_LOC) //COL 3
             append(" TEXT, ")
-            append(COL_START)
+            append(COL_START) //COL 4
             append(" TEXT, ")
-            append(COL_END)
+            append(COL_END) //COL 5
             append(" TEXT, ")
-            append(COL_SITU)
+            append(COL_SITU) //COL 6
             append(" TEXT, ")
-            append(COL_OBJS)
+            append(COL_OBJS) //COL 7
             append(" TEXT, ")
-            append(COL_EMPHASIS)
+            append(COL_EMPHASIS) //COL 8
             append(" TEXT, ")
-            append(COL_SA)
+            append(COL_SA) //COL 9
             append(" TEXT, ")
-            append(COL_SAFETYPLANREQ)
+            append(COL_SAFETYPLANREQ) //COL 10
             append(" INTEGER, ")
-            append(COL_SAFETYPLANLOC)
+            append(COL_SAFETYPLANLOC) //COL 11
             append(" TEXT, ")
-            append(COL_RAD_INSTRUCTIONS)
+            append(COL_RAD_INSTRUCTIONS) //COL 12
             append(" TEXT, ")
-            append(COL_INCIDENT_REF)
+            append(COL_INCIDENT_REF) //COL 13
             append(" TEXT, ")
-            append(COL_INCIDENT_MAPIMAGE)
+            append(COL_INCIDENT_MAPIMAGE) //COL 14
             append(" BLOB)")
         }
-        Log.i("IncidentTableCreator",incidentTableCreator)
+        Log.i("IncidentTableCreator", incidentTableCreator)
         db?.execSQL(incidentTableCreator)
 
         val organisationTableCreator = buildString {
@@ -207,7 +207,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
     }
 
     //INCIDENT ACTIONS
-    fun insertIncident(incident: IncidentList): Boolean {
+    fun insertIncident(incident: IncidentPutList): Boolean {
         val db = this.writableDatabase
         val timestamp = Instant.now().toEpochMilli()
         val values = ContentValues().apply {
@@ -224,17 +224,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
     //called by displayIncident@MainActivity for RecyclerView
     fun getIncidentList(): Cursor {
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $INCIDENT_TABLE ORDER BY $COL_ID DESC",null)
+        val cursor = db.rawQuery("SELECT * FROM $INCIDENT_TABLE ORDER BY $COL_ID DESC", null)
         return cursor
     }
 
-    fun getIncidentTypes(): List<String>{
+    fun getIncidentTypes(): List<String> {
         val returnList = mutableListOf<String>()
         val queryString = "SELECT $COL_INCIDENT_TYPE FROM $INCIDENT_TABLE"
         val db = this.readableDatabase
         val cursor: Cursor = db.rawQuery(queryString, null)
         if (cursor.moveToFirst())
-                return returnList
+            return returnList
         return returnList
     }
 
@@ -248,58 +248,84 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         db.close()
     }
 
-    fun updateIncidentField(keyColumn: String, keyValue: String, targetColumn: String, targetValue: String) {
+    fun updateIncidentField(
+        keyColumn: String,
+        keyValue: String,
+        targetColumn: String,
+        targetValue: String
+    ) {
         val db = this.writableDatabase
-        val queryString = "UPDATE $INCIDENT_TABLE SET $targetColumn='$targetValue' WHERE $keyColumn='$keyValue'"
-        Log.i("updateIncidentField",queryString)
+        val queryString =
+            "UPDATE $INCIDENT_TABLE SET $targetColumn='$targetValue' WHERE $keyColumn='$keyValue'"
+        Log.i("updateIncidentField", queryString)
         db.execSQL(queryString)
         db.close()
     }
 
-    fun getSelectedIncident(incident: Int): ArrayList<IncidentList> {
+    fun getSelectedIncident(incident: Int): ArrayList<IncidentGetList> {
         val db = this.readableDatabase
-        val incidentArray = ArrayList<IncidentList>()
+        val incidentArray = ArrayList<IncidentGetList>()
         val queryString = "SELECT * FROM $INCIDENT_TABLE WHERE $COL_ID = $incident"
-        val cursor = db.rawQuery(queryString,null)
-        if (cursor.moveToFirst()){
-            do{
-                incidentArray.add(IncidentList(
-                    incidentID = cursor.getInt(0),
-                    incidentName = cursor.getString(1),
-                    incidentType = cursor.getString(2),
-                    incidentLoc = cursor.getString(3),
-                    incidentStart = cursor.getLong(4),
-                    incidentStartDTG = FormatDate(cursor.getLong(4))
-                ))
+        val cursor = db.rawQuery(queryString, null)
+        if (cursor.moveToFirst()) {
+            do {
+                incidentArray.add(
+                    IncidentGetList(
+                        incidentID = cursor.getInt(0),
+                        incidentName = cursor.getString(1),
+                        incidentType = cursor.getString(2),
+                        incidentLoc = cursor.getString(3),
+                        incidentStart = cursor.getLong(4),
+                        incidentStartDTG = FormatDate(cursor.getLong(4)),
+                        incidentMapImage = getIncidentMapByteArray(
+                            COL_ID,
+                            cursor.getInt(0).toString()
+                        )
+                    )
+                )
             } while (cursor.moveToNext())
         }
         return incidentArray
     }
 
-    fun updateIncidentMapImage(keyColumn: String, keyValue: String, targetColumn: String, targetImage: Bitmap) {
+    fun updateIncidentMapImage(
+        keyColumn: String,
+        keyValue: String,
+        targetColumn: String,
+        targetImage: Bitmap
+    ) {
         val db = this.writableDatabase
         val targetArray2 = bitmapToByteArray(targetImage)
-        val queryString = "UPDATE $INCIDENT_TABLE SET $targetColumn = '$targetArray2' WHERE $keyColumn = '$keyValue'"
-        db.execSQL(queryString)
-        Log.i("updateIncidentMapImage",targetArray2.size.toString())
-        Log.i("updateIncidentMapImage", targetArray2.toString())
+        val values = ContentValues().apply {
+            put(targetColumn, targetArray2)
+        }
+        db.update("INCIDENT_TABLE", values, "$keyColumn = ?", arrayOf(keyValue))
+//        Log.i("updateIncidentMapImage2", targetArray2.size.toString())
+//        Log.i("updateIncidentMapImage2", targetArray2.contentToString())
         db.close()
     }
 
-    fun bitmapToByteArray(bitmap: Bitmap, format: CompressFormat = CompressFormat.PNG, quality: Int = 100): ByteArray {
+    fun bitmapToByteArray(
+        bitmap: Bitmap,
+        format: CompressFormat = CompressFormat.PNG,
+        quality: Int = 100
+    ): ByteArray {
         val stream = ByteArrayOutputStream()
         bitmap.compress(format, quality, stream)
-        return stream.toByteArray()
+        val byteArray = stream.toByteArray()
+        return byteArray
     }
 
-    fun getIncidentMapImage(keyColumn: String, keyValue: String): Bitmap? {
+    fun getIncidentMapBitmap(keyColumn: String, keyValue: String): Bitmap? {
         val db = this.readableDatabase
-        val queryString = "SELECT $COL_INCIDENT_MAPIMAGE FROM $INCIDENT_TABLE WHERE $keyColumn = $keyValue"
+        val queryString =
+            "SELECT $COL_INCIDENT_MAPIMAGE FROM $INCIDENT_TABLE WHERE $keyColumn = $keyValue"
         val cursor = db.rawQuery(queryString, null)
-        cursor?.use {
+        cursor.use {
             if (it.moveToFirst()) {
                 val byteArray = it.getBlob(it.getColumnIndexOrThrow(COL_INCIDENT_MAPIMAGE))
                 byteArray?.let {
+                    //Log.i("getIncidentMapImage", byteArray.contentToString())
                     return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
                 }
             }
@@ -307,4 +333,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         return null
     }
 
+    fun getIncidentMapByteArray(keyColumn: String, keyValue: String): ByteArray {
+        val db = this.readableDatabase
+        val queryString =
+            "SELECT $COL_INCIDENT_MAPIMAGE FROM $INCIDENT_TABLE WHERE $keyColumn = $keyValue"
+        val cursor = db.rawQuery(queryString, null)
+        val defaultImage = createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+        var byteArray: ByteArray = bitmapToByteArray(defaultImage)
+        if (cursor.moveToFirst()) {
+            byteArray = cursor.getBlob(cursor.getColumnIndexOrThrow(COL_INCIDENT_MAPIMAGE))
+
+        }
+        return byteArray
+    }
 }

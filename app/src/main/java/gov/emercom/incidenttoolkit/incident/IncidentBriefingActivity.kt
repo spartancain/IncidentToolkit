@@ -1,28 +1,24 @@
 package gov.emercom.incidenttoolkit.incident
 
-import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import gov.emercom.incidenttoolkit.DatabaseHelper
-import gov.emercom.incidenttoolkit.R
-import gov.emercom.incidenttoolkit.incident.IncidentActivity
-import gov.emercom.incidenttoolkit.main.IncidentList
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import java.io.ByteArrayOutputStream
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import gov.emercom.incidenttoolkit.DatabaseHelper
+import gov.emercom.incidenttoolkit.R
+import gov.emercom.incidenttoolkit.main.IncidentGetList
 
 
 class IncidentBriefingActivity: AppCompatActivity() {
@@ -51,11 +47,17 @@ class IncidentBriefingActivity: AppCompatActivity() {
                     targetColumn = "INCIDENT_MAPIMAGE",
                     targetImage = bitmap
                 )
-                val savedImage = dbh.getIncidentMapImage(
+                val savedImage = dbh.getIncidentMapByteArray(
                     keyColumn = "COLUMN_ID",
                     keyValue = incidentID.toString()
                 )
-                ivIncidentMapImage.setImageBitmap(savedImage)
+                ivIncidentMapImage.setImageBitmap(
+                    BitmapFactory.decodeByteArray(
+                        savedImage,
+                        0,
+                        savedImage.size
+                    )
+                )
                 Log.i("savedImage",savedImage.toString())
             }
             Toast.makeText(this@IncidentBriefingActivity,"Image Successfully Saved",Toast.LENGTH_SHORT).show()
@@ -63,19 +65,30 @@ class IncidentBriefingActivity: AppCompatActivity() {
         }
     }
 
-    fun setTextFromArrayList(arrayList: ArrayList<IncidentList>) {
+    fun setTextFromArrayList(arrayList: ArrayList<IncidentGetList>) {
         if (arrayList.isNotEmpty() ){
             val array = arrayList[0]
             incidentID = array.incidentID
             val incidentName = array.incidentName
             val incidentStart = array.incidentStartDTG
+            val incidentMapByteArray: ByteArray? = array.incidentMapImage
+            val incidentMapImage = incidentMapByteArray?.size?.let {
+                BitmapFactory.decodeByteArray(
+                    incidentMapByteArray, 0,
+                    it
+                )
+            }
             tIncidentID3.text = incidentID.toString()
             tIncidentName3.text = incidentName
             tIncidentStart3.text = incidentStart
+            ivIncidentMapImage.setImageBitmap(incidentMapImage)
         } else {
             tIncidentID3.text = "UU"
             tIncidentName3.text = getString(R.string.error_out_bounds)
             //tIncidentStart3.text = getString(R.string.error_out_bounds)
+            val defaultMapImage =
+                ContextCompat.getDrawable(this, R.drawable.incident_map_image_default)
+            ivIncidentMapImage.setImageDrawable(defaultMapImage)
         }
     }
 

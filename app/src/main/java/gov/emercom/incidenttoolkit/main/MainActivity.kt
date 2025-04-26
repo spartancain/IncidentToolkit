@@ -1,10 +1,8 @@
 package gov.emercom.incidenttoolkit.main
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.database.Cursor
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -29,7 +27,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var acIncidentLoc: AutoCompleteTextView
     private lateinit var recyclerView: RecyclerView
     lateinit var dbh: DatabaseHelper
-    private lateinit var newArray: ArrayList<IncidentList>
+    private lateinit var newArray: ArrayList<IncidentPutList>
     private var selectedIncident: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +50,7 @@ class MainActivity : ComponentActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
         //initialize newArray for onclicklistener in recyclerview
-        newArray = arrayListOf<IncidentList>()
+        newArray = arrayListOf<IncidentPutList>()
 
 
         //Autofill Hints?? Not working yet but it aint broke the fucker so it stays
@@ -71,7 +69,7 @@ class MainActivity : ComponentActivity() {
                 val incidentLoc = acIncidentLoc.text.toString()
                 val incidentStart = -1
                 val incidentStartDTG = -1
-                val incident = IncidentList(
+                val incident = IncidentPutList(
                     incidentID,
                     incidentName,
                     incidentType,
@@ -82,7 +80,7 @@ class MainActivity : ComponentActivity() {
 
                 if (incidentName.length > 2 && incidentType.length > 2 && incidentLoc.length > 2) {
                     try {
-                        IncidentList(
+                        IncidentPutList(
                             -1,
                             ptIncidentName.text.toString(),
                             acIncidentType.text.toString(),
@@ -99,7 +97,7 @@ class MainActivity : ComponentActivity() {
                         toast.show()
 
                     } catch (e: Exception) {
-                        IncidentList(
+                        IncidentPutList(
                             -1,
                             "Error",
                             "No Type",
@@ -183,7 +181,7 @@ class MainActivity : ComponentActivity() {
 
     fun displayIncident() {
         val newCursor: Cursor = dbh.getIncidentList()
-        newArray = ArrayList<IncidentList>()
+        newArray = ArrayList<IncidentPutList>()
         while (newCursor.moveToNext()){
             val uIncidentID = newCursor.getInt(0)
             val uIncidentName = newCursor.getString(1)
@@ -193,7 +191,7 @@ class MainActivity : ComponentActivity() {
             val uIncidentStartDTG = FormatDate(uIncidentStart)
 
             newArray.add(
-                IncidentList(
+                IncidentPutList(
                 uIncidentID,
                 uIncidentName,
                 uIncidentType,

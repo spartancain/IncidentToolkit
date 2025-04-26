@@ -10,7 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import gov.emercom.incidenttoolkit.R
 import gov.emercom.incidenttoolkit.incident.IncidentActivity
 
-class IncidentsRecyclerAdapter (val incidentList: ArrayList<IncidentList>): RecyclerView.Adapter<IncidentsRecyclerAdapter.IncidentListViewHolder>() {
+class IncidentsRecyclerAdapter(val incidentPutList: ArrayList<IncidentPutList>) :
+    RecyclerView.Adapter<IncidentsRecyclerAdapter.IncidentListViewHolder>() {
 
     //Click and LongClick vars interfaces and funs
     private lateinit var clickListener : OnItemClickListener
@@ -101,20 +102,20 @@ class IncidentsRecyclerAdapter (val incidentList: ArrayList<IncidentList>): Recy
     }
 
     override fun getItemCount(): Int {
-        incidentList.size
-        return incidentList.size
+        incidentPutList.size
+        return incidentPutList.size
     }
 
     override fun onBindViewHolder(
         holder: IncidentListViewHolder,
         position: Int
     ) {
-        val currentIncident = incidentList[position]
+        val currentIncident = incidentPutList[position]
         holder.tIncidentID?.text = currentIncident.incidentID.toString()
         holder.tIncidentName?.text = currentIncident.incidentName
         holder.tIncidentType?.text = currentIncident.incidentType
         holder.tIncidentLoc?.text = currentIncident.incidentLoc
-        holder.tIncidentStart.text = currentIncident.incidentStartDTG.toString()
+        holder.tIncidentStart.text = currentIncident.incidentStartDTG
 
         holder.itemView
 

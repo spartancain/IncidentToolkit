@@ -1,27 +1,22 @@
 package gov.emercom.incidenttoolkit.incident
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.widget.TextView
-import androidx.activity.ComponentActivity
-import androidx.activity.enableEdgeToEdge
-import androidx.recyclerview.widget.RecyclerView
-import gov.emercom.incidenttoolkit.R
-import gov.emercom.incidenttoolkit.DatabaseHelper
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import gov.emercom.incidenttoolkit.main.IncidentList
+import androidx.recyclerview.widget.RecyclerView
+import gov.emercom.incidenttoolkit.DatabaseHelper
+import gov.emercom.incidenttoolkit.R
+import gov.emercom.incidenttoolkit.main.IncidentGetList
 import gov.emercom.incidenttoolkit.main.MainActivity
 
 interface DialogListener {
@@ -42,7 +37,7 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
     var activityIncidentID: Int = -1
 
     //apply incident info array to textview fields on layout
-    fun setTextFromArrayList(arrayList: ArrayList<IncidentList>) {
+    fun setTextFromArrayList(arrayList: ArrayList<IncidentGetList>) {
         if (arrayList.isNotEmpty() ){
             val array = arrayList[0]
             val incidentID = array.incidentID
@@ -110,7 +105,7 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
         //Edit field buttons
         ivEditName.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
-                etUpdateField.setHint(tIncidentName2.text)
+                etUpdateField.hint = tIncidentName2.text
                 etUpdateField.setText(tIncidentName2.text.toString())
                 etUpdateField.setAutofillHints(tIncidentName2.text.toString())
                 val incidentNameText = etUpdateField.text.toString()
@@ -129,7 +124,7 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
 
         ivEditLoc.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
-                etUpdateField.setHint(tIncidentLoc2.text)
+                etUpdateField.hint = tIncidentLoc2.text
                 etUpdateField.setText(tIncidentLoc2.text.toString())
                 etUpdateField.setAutofillHints(tIncidentLoc2.text.toString())
                 val incidentLocText = etUpdateField.text.toString()
