@@ -22,7 +22,7 @@
                 app:layout_constraintStart_toStartOf="@+id/tIncidentName3"
                 app:layout_constraintTop_toBottomOf="@+id/tIncidentName3" />
 
-            <ImageView
+            <com.ortiz.touchview.TouchImageView
                 android:id="@+id/ivIncidentMapImage"
                 android:layout_width="400dp"
                 android:layout_height="350dp"
