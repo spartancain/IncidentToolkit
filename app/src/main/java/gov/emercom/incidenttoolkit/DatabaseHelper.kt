@@ -214,6 +214,22 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         return cursor
     }
 
+    fun getSingleColumnAll(table: String, keyColumn: String): Array<String> {
+        val db = this.readableDatabase
+        val queryString = "SELECT $keyColumn FROM $table"
+        val cursor: Cursor = db.rawQuery(queryString, null)
+        val typeList = mutableListOf<String>()
+        if (cursor.moveToFirst()) {
+            do {
+                val type = cursor.getString(cursor.getColumnIndexOrThrow(keyColumn))
+                typeList.add(type)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return typeList.toTypedArray()
+    }
+
     fun updateField(
         table: String,
         keyColumn: String,
@@ -228,6 +244,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         db.execSQL(queryString)
         db.close()
     }
+
 
     fun deleteRecord(table: String, keyColumn: String, keyValue: Int): Boolean {
         //find model in DB, if found delete and return true. If not found, return false.
@@ -254,21 +271,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         db.close()
     }
 
-    fun getIncidentTypes(): Array<String> {
-        val db = this.readableDatabase
-        val queryString = "SELECT $COL_INCIDENT_TYPE FROM $INCIDENT_TABLE"
-        val cursor: Cursor = db.rawQuery(queryString, null)
-        val typeList = mutableListOf<String>()
-        if (cursor.moveToFirst()) {
-            do {
-                val type = cursor.getString(cursor.getColumnIndexOrThrow(COL_INCIDENT_TYPE))
-                typeList.add(type)
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-        db.close()
-        return typeList.toTypedArray()
-    }
 
     fun getSelectedIncident(incident: Int): ArrayList<IncidentGetList> {
         val db = this.readableDatabase

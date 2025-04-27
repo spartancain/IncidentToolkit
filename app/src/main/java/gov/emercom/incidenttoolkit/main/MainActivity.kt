@@ -54,12 +54,24 @@ class MainActivity : ComponentActivity() {
         newArray = arrayListOf<IncidentPutList>()
 
 
-        //Autofill Hints?? Not working yet but it aint broke the fucker so it stays
-        val typeArrayAdapter =
-            ArrayAdapter(this, android.R.layout.simple_list_item_1, dbh.getIncidentTypes())
+        //Autofill Hints
+        val typeArrayAdapter = ArrayAdapter(
+            this,
+            android.R.layout.select_dialog_singlechoice,
+            dbh.getSingleColumnAll("INCIDENT_TABLE", "INCIDENT_TYPE")
+        )
         acIncidentType.setAdapter(typeArrayAdapter)
         acIncidentType.threshold = 0
         acIncidentType.setOnClickListener { acIncidentType.showDropDown() }
+
+        val locArrayAdapter = ArrayAdapter(
+            this,
+            android.R.layout.select_dialog_singlechoice,
+            dbh.getSingleColumnAll("INCIDENT_TABLE", "INCIDENT_LOC")
+        )
+        acIncidentLoc.setAdapter(locArrayAdapter)
+        acIncidentLoc.threshold = 0
+        acIncidentLoc.setOnClickListener { acIncidentLoc.showDropDown() }
 
 
         //Button listeners

@@ -115,24 +115,24 @@
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="2dp"
+            android:layout_marginTop="5dp"
             android:background="?android:attr/listDivider"
             app:layout_constraintTop_toBottomOf="@id/tvIncidentMapImageHint"
-            tools:layout_editor_absoluteX="1dp"
-            tools:layout_editor_absoluteY="535dp" />
+            tools:layout_editor_absoluteX="1dp" />
 
         <TextView
             android:id="@+id/tvBriefingSummaryTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="16dp"
             android:paddingStart="10dp"
             android:text="@string/situation_summary_title"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
-            app:layout_constraintTop_toBottomOf="@+id/tvIncidentMapImageHint" />
+            app:layout_constraintTop_toBottomOf="@id/divider" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/etBriefingSituationSummary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -149,7 +149,7 @@
             android:id="@+id/tvBriefingObectivesTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:paddingStart="10dp"
             android:text="Current and Planned Objectives:"
             android:textSize="16sp"
@@ -157,7 +157,7 @@
             app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
             app:layout_constraintTop_toBottomOf="@+id/etBriefingSituationSummary" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/etBriefingObjectives"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -174,7 +174,7 @@
             android:id="@+id/tvBriefingActionsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:paddingStart="10dp"
             android:text="Current and Planned Actions:"
             android:textSize="16sp"
@@ -224,7 +224,7 @@
             android:id="@+id/tvBriefingOrganisation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:paddingStart="10dp"
             android:text="Current Organisation:"
             android:textSize="16sp"
@@ -279,7 +279,7 @@
                     android:gravity="center_horizontal"
                     android:paddingBottom="5dp">
 
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/etBriefingOrgIC"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -341,7 +341,7 @@
                     android:gravity="center_horizontal"
                     android:paddingBottom="5dp">
 
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/etBriefingOrgLiaison"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -352,7 +352,7 @@
                         android:textSize="12sp"
                         android:textStyle="normal" />
 
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/etBriefingOrgSafety"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -363,7 +363,7 @@
                         android:textSize="12sp"
                         android:textStyle="normal" />
 
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/etBriefingOrgPIO"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -437,7 +437,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal">
 
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/etBriefingOrgOpsChief"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -448,7 +448,7 @@
                         android:textSize="12sp"
                         android:textStyle="normal" />
 
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/etBriefingOrgPlanChief"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -459,7 +459,7 @@
                         android:textSize="12sp"
                         android:textStyle="normal" />
 
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/etBriefingOrgLogsChief"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -470,7 +470,7 @@
                         android:textSize="12sp"
                         android:textStyle="normal" />
 
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/etBriefingOrgFinanceChief"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

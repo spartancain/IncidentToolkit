@@ -6,7 +6,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.EditText
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -33,7 +34,7 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
     private lateinit var ivEditLoc: ImageView
     private lateinit var ivCloseIncident: ImageView
     private lateinit var recyclerView: RecyclerView
-    private lateinit var etUpdateField: EditText
+    private lateinit var etUpdateField: AutoCompleteTextView
     var activityIncidentID: Int = -1
 
     //apply incident info array to textview fields on layout
@@ -126,7 +127,15 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
             override fun onClick(v: View?) {
                 etUpdateField.hint = tIncidentLoc2.text
                 etUpdateField.setText(tIncidentLoc2.text.toString())
-                etUpdateField.setAutofillHints(tIncidentLoc2.text.toString())
+                //autocomplete not working here for some reason
+                val locArrayAdapter = ArrayAdapter(
+                    this@IncidentActivity,
+                    android.R.layout.select_dialog_singlechoice,
+                    dbh.getSingleColumnAll("INCIDENT_TABLE", "INCIDENT_LOC")
+                )
+                etUpdateField.setAdapter(locArrayAdapter)
+                etUpdateField.threshold = 0
+                etUpdateField.setOnClickListener { etUpdateField.showDropDown() }
                 val incidentLocText = etUpdateField.text.toString()
                 val dialog = UpdateDialog(
                     this@IncidentActivity,

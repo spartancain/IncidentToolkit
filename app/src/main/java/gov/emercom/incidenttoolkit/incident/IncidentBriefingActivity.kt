@@ -6,7 +6,9 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.EditText
+import android.view.View
+import android.widget.AutoCompleteTextView
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -28,17 +30,18 @@ class IncidentBriefingActivity: AppCompatActivity() {
     private lateinit var ivCloseBriefing: ImageView
     private lateinit var tIncidentStart3: TextView
     private lateinit var ivIncidentMapImage: ImageView
-    private lateinit var etBriefingSituationSummary: EditText
-    private lateinit var etBriefingObjectives: EditText
-    private lateinit var etBriefingOrgIC: EditText
-    private lateinit var etBriefingOrgLiaison: EditText
-    private lateinit var etBriefingOrgSafety: EditText
-    private lateinit var etBriefingOrgPIO: EditText
-    private lateinit var etBriefingOrgOpsChief: EditText
-    private lateinit var etBriefingOrgPlanChief: EditText
-    private lateinit var etBriefingOrgLogsChief: EditText
-    private lateinit var etBriefingOrgFinanceChief: EditText
-
+    private lateinit var etBriefingSituationSummary: AutoCompleteTextView
+    private lateinit var etBriefingObjectives: AutoCompleteTextView
+    private lateinit var etBriefingOrgIC: AutoCompleteTextView
+    private lateinit var etBriefingOrgLiaison: AutoCompleteTextView
+    private lateinit var etBriefingOrgSafety: AutoCompleteTextView
+    private lateinit var etBriefingOrgPIO: AutoCompleteTextView
+    private lateinit var etBriefingOrgOpsChief: AutoCompleteTextView
+    private lateinit var etBriefingOrgPlanChief: AutoCompleteTextView
+    private lateinit var etBriefingOrgLogsChief: AutoCompleteTextView
+    private lateinit var etBriefingOrgFinanceChief: AutoCompleteTextView
+    private lateinit var bBriefingSaveRemain: Button
+    private lateinit var bBriefingSaveExit: Button
 
     //image picker
     private  var pickImageLauncher: ActivityResultLauncher<Intent> = registerForActivityResult (ActivityResultContracts.StartActivityForResult()) { result ->
@@ -49,7 +52,6 @@ class IncidentBriefingActivity: AppCompatActivity() {
                 val dbh = DatabaseHelper(this@IncidentBriefingActivity)
                 val bitmapSource = ImageDecoder.createSource(contentResolver, it)
                 val bitmap = ImageDecoder.decodeBitmap(bitmapSource)
-                //ivIncidentMapImage.setImageBitmap(bitmap)
                 dbh.updateIncidentMapImage(
                     keyColumn = "COLUMN_ID",
                     keyValue = incidentID.toString(),
@@ -75,7 +77,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
     }
 
     fun setIncidentArrayText(arrayList: ArrayList<IncidentGetList>) {
-        if (arrayList.isNotEmpty() ){
+        if (arrayList.isNotEmpty()) {
             val array = arrayList[0]
             incidentID = array.incidentID
             val incidentName = array.incidentName
@@ -104,7 +106,50 @@ class IncidentBriefingActivity: AppCompatActivity() {
     }
 
     fun setPersArrayText(arrayList: ArrayList<PersList>) {
-        TODO()
+        if (arrayList.isNotEmpty()) {
+            val arrayIndexIC = searchArrayList(arrayList, "Incident Commander`")
+            val arrayIndexLiaison = searchArrayList(arrayList, "Liaison Officer`")
+            val arrayIndexSafety = searchArrayList(arrayList, "Safety Officer`")
+            val arrayIndexPIO = searchArrayList(arrayList, "Public Information Officer`")
+            val arrayIndexOpsChief = searchArrayList(arrayList, "Operations Chief`")
+            val arrayIndexPlanChief = searchArrayList(arrayList, "Planning Chief`")
+            val arrayIndexLogsChief = searchArrayList(arrayList, "Logistics Chief`")
+            val arrayIndexFinanceChief = searchArrayList(arrayList, "Finance Chief`")
+
+            val arrayIC = arrayList[arrayIndexIC]
+            val arrayLiaison = arrayList[arrayIndexLiaison]
+            val arraySafety = arrayList[arrayIndexSafety]
+            val arrayPIO = arrayList[arrayIndexPIO]
+            val arrayOpsChief = arrayList[arrayIndexOpsChief]
+            val arrayPlanChief = arrayList[arrayIndexPlanChief]
+            val arrayLogsChief = arrayList[arrayIndexLogsChief]
+            val arrayFinanceChief = arrayList[arrayIndexFinanceChief]
+
+            val orgChartNameArray = arrayOf(
+                arrayIC.persName, //Index 0
+                arrayLiaison.persName, //Index 1
+                arraySafety.persName, //Index 2
+                arrayPIO.persName, //Index 3
+                arrayOpsChief.persName, //Index 4
+                arrayPlanChief.persName, //Index 5
+                arrayLogsChief.persName, //Index 6
+                arrayFinanceChief.persName //Index 7
+            )
+
+            for (value in orgChartNameArray) {
+                if (isProperString(value)) {
+                    etBriefingOrgIC.setText(orgChartNameArray[0])
+                    etBriefingOrgLiaison.setText(orgChartNameArray[1])
+                    etBriefingOrgSafety.setText(orgChartNameArray[2])
+                    etBriefingOrgPIO.setText(orgChartNameArray[3])
+                    etBriefingOrgOpsChief.setText(orgChartNameArray[4])
+                    etBriefingOrgPlanChief.setText(orgChartNameArray[5])
+                    etBriefingOrgLogsChief.setText(orgChartNameArray[6])
+                    etBriefingOrgFinanceChief.setText(orgChartNameArray[7])
+                }
+            }
+
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -133,8 +178,25 @@ class IncidentBriefingActivity: AppCompatActivity() {
         etBriefingOrgPlanChief = findViewById(R.id.etBriefingOrgPlanChief)
         etBriefingOrgLogsChief = findViewById(R.id.etBriefingOrgLogsChief)
         etBriefingOrgFinanceChief = findViewById(R.id.etBriefingOrgFinanceChief)
+        bBriefingSaveRemain = findViewById(R.id.bBriefingSaveRemain)
+        bBriefingSaveExit = findViewById(R.id.bBriefingSaveExit)
+
+        /*        etBriefingSituationSummary.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+                    var oldText = etBriefingSituationSummary.text.toString()
+                    if (!hasFocus) {
+                        var resultArray: Array<Any> = arrayOf(etBriefingSituationSummary,"UU")
+                        var newText = etBriefingSituationSummary.text.toString()
+                        if (newText != oldText) {
+                            resultArray = arrayOf(etBriefingSituationSummary, newText)
+                        }
+                        Log.i("compareOnFocusLoss", "Array Resource ${resultArray[0]}, Old Value $oldText, New Value ${resultArray[1]}")
+                        changeArrayList.add(resultArray)
+                        return@OnFocusChangeListener
+                    }
+                }*/
 
         setIncidentArrayText(incidentRow)
+        setPersArrayText(incidentPersList)
 
         ivIncidentMapImage.setOnLongClickListener {
             val intent = Intent(Intent.ACTION_PICK)
@@ -143,8 +205,72 @@ class IncidentBriefingActivity: AppCompatActivity() {
             return@setOnLongClickListener true
         }
 
+        bBriefingSaveRemain.setOnClickListener {
+            val briefingOrgICNow = etBriefingOrgIC.text.toString()
+            val briefingOrgLiaisonNow = etBriefingOrgLiaison.text.toString()
+            val briefingOrgSafetyNow = etBriefingOrgSafety.text.toString()
+            val briefingOrgPIONow = etBriefingOrgPIO.text.toString()
+            val briefingOrgOpsChiefNow = etBriefingOrgOpsChief.text.toString()
+            val briefingOrgPlanChiefNow = etBriefingOrgPlanChief.text.toString()
+            val briefingOrgLogsChiefNow = etBriefingOrgLogsChief.text.toString()
+            val briefingOrgFinanceChiefNow = etBriefingOrgFinanceChief.text.toString()
+
+            dbh.updateField(
+                dbh.INCIDENT_TABLE,
+                dbh.COL_ID,
+                incidentID.toString(),
+                dbh.COL_SITU,
+                etBriefingSituationSummary.text.toString()
+            )
+            dbh.updateField(
+                dbh.INCIDENT_TABLE,
+                dbh.COL_ID,
+                incidentID.toString(),
+                dbh.COL_OBJS,
+                etBriefingObjectives.text.toString()
+            )
+
+        }
+
         //Hide the AppCompatActivity top action bar
         supportActionBar?.hide()
+    }
+
+    fun <T> searchArrayList(list: ArrayList<T>, query: String): Int {
+        for (index in list.indices) {
+            if (list[index] == query) {
+                return index // Return the index if found
+            }
+        }
+        return -1 // Return -1 if not found
+    }
+
+    fun isProperString(value: Any): Boolean {
+        return value is String
+    }
+
+    fun compareOnFocusLoss(
+        autoCompleteTextView: AutoCompleteTextView,
+        existingText: String
+    ): Array<String> {
+        var oldText = existingText
+        var newText = "UU"
+        autoCompleteTextView.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+            if (!hasFocus) {
+                newText = (view as AutoCompleteTextView).text.toString()
+                if (newText != oldText) {
+                    oldText = newText
+                    val resultArray =
+                        arrayOf(resources.getResourceEntryName(autoCompleteTextView.id), newText)
+                    Log.i(
+                        "compareOnFocusLoss",
+                        "Array Resource ${resultArray[0]}, New Value ${resultArray[1]}"
+                    )
+                    return@OnFocusChangeListener
+                }
+            }
+        }
+        return arrayOf("bees")
     }
 
 }
