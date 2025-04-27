@@ -3,109 +3,600 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/tvIncidentBriefingTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
+            android:paddingStart="10dp"
+            android:text="@string/tvIncidentBriefingTitle"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivCloseBriefing"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="5dp"
+            android:clickable="true"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:layout_constraintBottom_toBottomOf="@+id/tIncidentID3"
+            app:layout_constraintEnd_toStartOf="@+id/tIncidentID3"
+            app:layout_constraintTop_toTopOf="@+id/tIncidentID3" />
+
+        <TextView
+            android:id="@+id/tIncidentID3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="11"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvIncidentBriefingTitle" />
+
+        <TextView
+            android:id="@+id/tIncidentName3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingStart="10dp"
+            android:text="IncidentName3"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvIncidentBriefingTitle" />
+
+        <TextView
+            android:id="@+id/tIncidentStart3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:text="23MAR25 1100:21z"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tIncidentName3"
+            app:layout_constraintTop_toBottomOf="@+id/tIncidentName3" />
+
+        <TextView
+            android:id="@+id/tvIncidentMapImageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:text="@string/tvIncidentMapMarker"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tIncidentStart3"
+            app:layout_constraintTop_toBottomOf="@+id/tIncidentStart3" />
+
+        <com.ortiz.touchview.TouchImageView
+            android:id="@+id/ivIncidentMapImage"
+            android:layout_width="400dp"
+            android:layout_height="350dp"
+            android:longClickable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvIncidentMapImageTitle"
+            tools:src="@drawable/incident_map_image_default" />
+
+        <TextView
+            android:id="@+id/tvIncidentMapImageHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:text="@string/hint_image_longpress"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentMapImageTitle"
+            app:layout_constraintTop_toBottomOf="@+id/ivIncidentMapImage" />
+
+        <View
+            android:id="@+id/divider"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="2dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintTop_toBottomOf="@id/tvIncidentMapImageHint"
+            tools:layout_editor_absoluteX="1dp"
+            tools:layout_editor_absoluteY="535dp" />
 
-            <TextView
-                android:id="@+id/tIncidentStart3"
+        <TextView
+            android:id="@+id/tvBriefingSummaryTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:text="@string/situation_summary_title"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvIncidentMapImageHint" />
+
+        <EditText
+            android:id="@+id/etBriefingSituationSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:ems="100"
+            android:gravity="start|top"
+            android:hint="Insert Situation Summary and Safety Briefing"
+            android:inputType="textMultiLine"
+            android:textSize="16dp"
+            app:layout_constraintStart_toStartOf="@+id/tvBriefingSummaryTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvBriefingSummaryTitle" />
+
+        <TextView
+            android:id="@+id/tvBriefingObectivesTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:text="Current and Planned Objectives:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
+            app:layout_constraintTop_toBottomOf="@+id/etBriefingSituationSummary" />
+
+        <EditText
+            android:id="@+id/etBriefingObjectives"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:ems="100"
+            android:gravity="start|top"
+            android:hint="Insert Current and Planned Objectives"
+            android:inputType="textMultiLine"
+            android:textSize="16dp"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvBriefingObectivesTitle" />
+
+        <TextView
+            android:id="@+id/tvBriefingActionsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:text="Current and Planned Actions:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
+            app:layout_constraintTop_toBottomOf="@+id/etBriefingObjectives" />
+
+        <TableLayout
+            android:id="@+id/tableBriefingActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:foregroundGravity="center_vertical"
+            android:minHeight="20dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvBriefingActionsTitle">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvActionTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="10dp"
+                    android:text="0000"
+                    android:textSize="12sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/tvActionAction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="10dp"
+                    android:text="Placeholder - Action, Strategy, or Tactics Information"
+                    android:textSize="12sp"
+                    android:textStyle="normal" />
+
+            </TableRow>
+
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/tvBriefingOrganisation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:text="Current Organisation:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tableBriefingActions" />
+
+        <HorizontalScrollView
+            android:id="@+id/hsvBriefingOrgWrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:isScrollContainer="true"
+            android:padding="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvBriefingOrganisation">
+
+            <TableLayout
+                android:id="@+id/tableBriefingOrganisation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:paddingStart="10dp"
-                android:text="23MAR25 1100:21z"
-                android:textAlignment="textEnd"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/tIncidentName3"
-                app:layout_constraintTop_toBottomOf="@+id/tIncidentName3" />
-
-            <com.ortiz.touchview.TouchImageView
-                android:id="@+id/ivIncidentMapImage"
-                android:layout_width="400dp"
-                android:layout_height="350dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@drawable/black_border"
+                android:foregroundGravity="center_vertical"
+                android:minHeight="50dp"
+                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvIncidentMapImageTitle"
-                tools:src="@drawable/incident_map_image_default" />
+                app:layout_constraintTop_toBottomOf="@id/tvBriefingOrganisation">
 
-            <TextView
-                android:id="@+id/tvIncidentBriefingTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="30dp"
-                android:paddingStart="10dp"
-                android:text="@string/tvIncidentBriefingTitle"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="5dp">
 
-            <ImageView
-                android:id="@+id/ivCloseBriefing"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginEnd="5dp"
-                android:clickable="true"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
-                app:layout_constraintBottom_toBottomOf="@+id/tIncidentID3"
-                app:layout_constraintEnd_toStartOf="@+id/tIncidentID3"
-                app:layout_constraintTop_toTopOf="@+id/tIncidentID3" />
+                    <TextView
+                        android:id="@+id/tvBriefingOrgICTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="4"
+                        android:background="@color/black"
+                        android:text="Incident Commander:"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tIncidentID3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:text="11"
-                android:textAlignment="textEnd"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvIncidentBriefingTitle" />
+                </TableRow>
 
-            <TextView
-                android:id="@+id/tIncidentName3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingStart="10dp"
-                android:text="IncidentName3"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constrainedWidth="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
-                app:layout_constraintTop_toBottomOf="@+id/tvIncidentBriefingTitle" />
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="5dp">
 
-            <TextView
-                android:id="@+id/tvIncidentMapImageTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:paddingStart="10dp"
-                android:text="Incident Map / Sketch:"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/tIncidentStart3"
-                app:layout_constraintTop_toBottomOf="@+id/tIncidentStart3" />
+                    <EditText
+                        android:id="@+id/etBriefingOrgIC"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="4"
+                        android:hint="Sample Name"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
 
-            <Button
-                android:id="@+id/bSelectMapImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select Map Image"
-                app:layout_constraintBottom_toTopOf="@+id/ivIncidentMapImage"
-                app:layout_constraintEnd_toEndOf="@+id/ivIncidentMapImage" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="5dp">
+
+                    <TextView
+                        android:id="@+id/tvBriefingOrgLiaisonTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_span="1"
+                        android:background="@color/black"
+                        android:gravity="center_horizontal"
+                        android:paddingHorizontal="5dp"
+                        android:text="Liaison Officer:"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvBriefingOrgSafetyTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_span="1"
+                        android:background="@color/black"
+                        android:gravity="center"
+                        android:paddingHorizontal="5dp"
+                        android:text="Safety Officer:"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvBriefingOrgPIOTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_span="1"
+                        android:background="@color/black"
+                        android:gravity="center"
+                        android:paddingHorizontal="5dp"
+                        android:text="Public Info Officer:"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="5dp">
+
+                    <EditText
+                        android:id="@+id/etBriefingOrgLiaison"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:hint="Sample Name"
+                        android:paddingHorizontal="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+
+                    <EditText
+                        android:id="@+id/etBriefingOrgSafety"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:hint="Sample Name"
+                        android:paddingHorizontal="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+
+                    <EditText
+                        android:id="@+id/etBriefingOrgPIO"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:hint="Sample Name"
+                        android:paddingHorizontal="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="5dp">
+
+                    <TextView
+                        android:id="@+id/tvBriefingOrgOpsChiefTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_span="1"
+                        android:background="@color/black"
+                        android:gravity="center_horizontal"
+                        android:paddingHorizontal="5dp"
+                        android:text="Operations Chief:"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvBriefingOrgPlanChiefTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_span="1"
+                        android:background="@color/black"
+                        android:gravity="center"
+                        android:paddingHorizontal="5dp"
+                        android:text="Planning Chief:"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvBriefingOrgLogsChiefTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_span="1"
+                        android:background="@color/black"
+                        android:gravity="center"
+                        android:paddingHorizontal="5dp"
+                        android:text="Logistics Chief:"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvBriefingOrgFinanceChiefTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:background="@color/black"
+                        android:paddingHorizontal="5dp"
+                        android:text="Finance Chief"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal">
+
+                    <EditText
+                        android:id="@+id/etBriefingOrgOpsChief"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:hint="Sample Name"
+                        android:paddingHorizontal="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+
+                    <EditText
+                        android:id="@+id/etBriefingOrgPlanChief"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:hint="Sample Name"
+                        android:paddingHorizontal="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+
+                    <EditText
+                        android:id="@+id/etBriefingOrgLogsChief"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:hint="Sample Name"
+                        android:paddingHorizontal="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+
+                    <EditText
+                        android:id="@+id/etBriefingOrgFinanceChief"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:hint="Sample Name"
+                        android:paddingHorizontal="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/tvBriefingOrgOpsPers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:gravity="start|top"
+                        android:hint="\n\nOperations Personnel"
+                        android:inputType="textMultiLine"
+                        android:paddingHorizontal="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/tvBriefingOrgPlanPers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:gravity="start|top"
+                        android:hint="\n\nPlanning Personnel"
+                        android:inputType="textMultiLine"
+                        android:paddingHorizontal="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/tvBriefingOrgLogsPers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:gravity="start|top"
+                        android:hint="\n\nLogistics Personnel"
+                        android:inputType="textMultiLine"
+                        android:paddingHorizontal="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/tvBriefingOrgFinancePers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_span="1"
+                        android:gravity="start|top"
+                        android:hint="\n\nFinance Personnel"
+                        android:inputType="textMultiLine"
+                        android:paddingHorizontal="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+
+                </TableRow>
+
+            </TableLayout>
+        </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/tvBriefingResourcesTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:text="Resource Summary:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
+            app:layout_constraintTop_toBottomOf="@+id/hsvBriefingOrgWrapper" />
+
+        <TextView
+            android:id="@+id/tvBriefingResourcePlaceholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:text="Placeholder"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentMapImageTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvBriefingResourcesTitle" />
+
+        <Button
+            android:id="@+id/bBriefingSaveRemain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="15dp"
+            android:text="Save And Remain Here"
+            app:layout_constraintEnd_toStartOf="@id/bBriefingSaveExit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvBriefingResourcePlaceholder" />
+
+        <Button
+            android:id="@+id/bBriefingSaveExit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="15dp"
+            android:text="Save And Exit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/bBriefingSaveRemain"
+            app:layout_constraintTop_toBottomOf="@id/tvBriefingResourcePlaceholder" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="2000dp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

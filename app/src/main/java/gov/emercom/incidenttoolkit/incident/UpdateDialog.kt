@@ -50,7 +50,8 @@ class UpdateDialog(
             override fun onClick(v: View?) {
                 val updateValue = etUpdate.text.toString()
                 if (updateValue.length > 2) {
-                    dbh.updateIncidentField(
+                    dbh.updateField(
+                        table = "INCIDENT_TABLE",
                         keyColumn = keyColumn,
                         keyValue = keyValue,
                         targetColumn = targetColumn,

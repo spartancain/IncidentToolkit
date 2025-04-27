@@ -11,4 +11,7 @@
     <string name="tvIncidentPageTitle">Incident</string>
     <string name="error_out_bounds">Error: Out of Bounds</string>
     <string name="tvIncidentBriefingTitle">Incident Briefing</string>
+    <string name="tvIncidentMapMarker">Incident Map / Sketch:</string>
+    <string name="hint_image_longpress">(Long press to select new image)</string>
+    <string name="situation_summary_title">Situation Summary and Safety Briefing:</string>
 </resources>

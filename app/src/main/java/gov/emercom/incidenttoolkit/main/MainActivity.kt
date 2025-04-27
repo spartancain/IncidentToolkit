@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.database.Cursor
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.TextView
@@ -54,74 +55,80 @@ class MainActivity : ComponentActivity() {
 
 
         //Autofill Hints?? Not working yet but it aint broke the fucker so it stays
-        val incidentTypes = dbh.getIncidentTypes().toString()
-        acIncidentType.setAutofillHints(incidentTypes)
+        val typeArrayAdapter =
+            ArrayAdapter(this, android.R.layout.simple_list_item_1, dbh.getIncidentTypes())
+        acIncidentType.setAdapter(typeArrayAdapter)
+        acIncidentType.threshold = 0
+        acIncidentType.setOnClickListener { acIncidentType.showDropDown() }
 
 
         //Button listeners
-        bSubmitIncident.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View?) {
+        bSubmitIncident.setOnClickListener { // Action to perform when the button is clicked
+            val incidentID = -1
+            val incidentName = ptIncidentName.text.toString()
+            val incidentType = acIncidentType.text.toString()
+            val incidentLoc = acIncidentLoc.text.toString()
+            val incidentStart = -1
+            val incidentStartDTG = -1
+            val incident = IncidentPutList(
+                incidentID,
+                incidentName,
+                incidentType,
+                incidentLoc,
+                incidentStart.toLong(),
+                incidentStartDTG.toString()
+            )
 
-                // Action to perform when the button is clicked
-                val incidentID = -1
-                val incidentName = ptIncidentName.text.toString()
-                val incidentType = acIncidentType.text.toString()
-                val incidentLoc = acIncidentLoc.text.toString()
-                val incidentStart = -1
-                val incidentStartDTG = -1
-                val incident = IncidentPutList(
-                    incidentID,
-                    incidentName,
-                    incidentType,
-                    incidentLoc,
-                    incidentStart.toLong(),
-                    incidentStartDTG.toString()
-                )
+            if (incidentName.length > 2 && incidentType.length > 2 && incidentLoc.length > 2) {
+                try {
+                    IncidentPutList(
+                        -1,
+                        ptIncidentName.text.toString(),
+                        acIncidentType.text.toString(),
+                        acIncidentLoc.text.toString(),
+                        incidentStart.toLong(),
+                        incidentStartDTG.toString()
+                    )
+                    ptIncidentName.text = ""
+                    acIncidentType.setText("")
+                    acIncidentLoc.setText("")
 
-                if (incidentName.length > 2 && incidentType.length > 2 && incidentLoc.length > 2) {
-                    try {
-                        IncidentPutList(
-                            -1,
-                            ptIncidentName.text.toString(),
-                            acIncidentType.text.toString(),
-                            acIncidentLoc.text.toString(),
-                            incidentStart.toLong(),
-                            incidentStartDTG.toString()
-                        )
-                        ptIncidentName.text = ""
-                        acIncidentType.setText("")
-                        acIncidentLoc.setText("")
+                    val success: Boolean = dbh.insertIncident(incident)
+                    val toast = Toast.makeText(
+                        this@MainActivity,
+                        "Incident Creation $success",
+                        Toast.LENGTH_SHORT
+                    )
+                    toast.show()
 
-                        val success: Boolean = dbh.insertIncident(incident)
-                        val toast = Toast.makeText(this@MainActivity, "Incident Creation $success",Toast.LENGTH_SHORT)
-                        toast.show()
-
-                    } catch (e: Exception) {
-                        IncidentPutList(
-                            -1,
-                            "Error",
-                            "No Type",
-                            "No Loc",
-                            -1,
-                            (-1).toString()
-                        )
+                } catch (e: Exception) {
+                    IncidentPutList(
+                        -1,
+                        "Error",
+                        "No Type",
+                        "No Loc",
+                        -1,
+                        (-1).toString()
+                    )
 
 
-                        val toast = Toast.makeText(
-                            this@MainActivity,
-                            "Error Submitting Incident",
-                            Toast.LENGTH_SHORT
-                        )
-                        toast.show()
-                    }
+                    val toast = Toast.makeText(
+                        this@MainActivity,
+                        "Error Submitting Incident",
+                        Toast.LENGTH_SHORT
+                    )
+                    toast.show()
                 }
-                else {
-                    Toast.makeText(this@MainActivity,"A value is too short! (3 Characters Minimum)",Toast.LENGTH_SHORT).show()
-                }
-
-                displayIncident()
+            } else {
+                Toast.makeText(
+                    this@MainActivity,
+                    "A value is too short! (3 Characters Minimum)",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        })
+
+            displayIncident()
+        }
 
         bRefreshIncidents.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
@@ -145,7 +152,7 @@ class MainActivity : ComponentActivity() {
                 dialogBuilder.setTitle("Confirm Incident Deletion")
                 dialogBuilder.setMessage("Delete Incident $selectedIncident?")
                 dialogBuilder.setPositiveButton("Delete") { dialog, which ->
-                    dbh.deleteIncident(selectedIncident)
+                    dbh.deleteRecord("INCIDENT_TABLE", "COLUMN_ID", selectedIncident)
                     Toast.makeText(
                         this@MainActivity,
                         "Incident $selectedIncident Deleted",
@@ -180,7 +187,7 @@ class MainActivity : ComponentActivity() {
     //Incident display updater for RecyclerView
 
     fun displayIncident() {
-        val newCursor: Cursor = dbh.getIncidentList()
+        val newCursor: Cursor = dbh.getTableContentsDescending("INCIDENT_TABLE", "COLUMN_ID")
         newArray = ArrayList<IncidentPutList>()
         while (newCursor.moveToNext()){
             val uIncidentID = newCursor.getInt(0)

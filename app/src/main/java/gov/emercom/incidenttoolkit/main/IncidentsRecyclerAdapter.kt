@@ -26,8 +26,8 @@ class IncidentsRecyclerAdapter(val incidentPutList: ArrayList<IncidentPutList>) 
             var selectedIncident: Int = -1
         }
     }
-    //
 
+    //Interfaces
     interface OnItemClickListener{
         fun onItemClick(position: Int, selectedIncidentID: String)
     }

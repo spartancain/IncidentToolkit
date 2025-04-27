@@ -42,6 +42,7 @@
         android:ems="15"
         android:hint="@string/IncidentType"
         android:padding="15dp"
+        android:completionThreshold="0"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="@+id/tvIncidentCreationPageTitle"
