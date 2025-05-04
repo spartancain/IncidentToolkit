@@ -53,6 +53,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
                 val bitmapSource = ImageDecoder.createSource(contentResolver, it)
                 val bitmap = ImageDecoder.decodeBitmap(bitmapSource)
                 dbh.updateIncidentMapImage(
+                    this@IncidentBriefingActivity,
                     keyColumn = "COLUMN_ID",
                     keyValue = incidentID.toString(),
                     targetColumn = "INCIDENT_MAPIMAGE",

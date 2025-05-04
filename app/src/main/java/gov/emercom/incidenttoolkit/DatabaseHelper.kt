@@ -10,6 +10,8 @@ import android.graphics.Bitmap.CompressFormat
 import android.graphics.Bitmap.createBitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import android.widget.Toast
+import gov.emercom.incidenttoolkit.incident.IncidentBriefingActivity
 import gov.emercom.incidenttoolkit.main.IncidentGetList
 import gov.emercom.incidenttoolkit.main.IncidentPutList
 import gov.emercom.incidenttoolkit.main.OrgList
@@ -308,6 +310,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
     }
 
     fun updateIncidentMapImage(
+        context: Context,
         keyColumn: String,
         keyValue: String,
         targetColumn: String,
@@ -315,13 +318,20 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
     ) {
         val db = this.writableDatabase
         val targetArray2 = bitmapToByteArray(targetImage)
-        val values = ContentValues().apply {
-            put(targetColumn, targetArray2)
-        }
-        db.update("INCIDENT_TABLE", values, "$keyColumn = ?", arrayOf(keyValue))
+        val maxImageBytes = 1000000 //Max cursor size is 1MB
+        if (targetArray2.size < maxImageBytes) {
+            val values = ContentValues().apply {
+                put(targetColumn, targetArray2)
+            }
+            db.update("INCIDENT_TABLE", values, "$keyColumn = ?", arrayOf(keyValue))
 //        Log.i("updateIncidentMapImage2", targetArray2.size.toString())
 //        Log.i("updateIncidentMapImage2", targetArray2.contentToString())
-        db.close()
+            db.close()
+            return
+        } else {
+            Toast.makeText(context,"Image Too Large. 1MB Max Size, Unfortunately.",Toast.LENGTH_SHORT).show()
+            return
+        }
     }
 
     fun bitmapToByteArray(
