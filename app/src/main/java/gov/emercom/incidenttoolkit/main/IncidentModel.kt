@@ -112,6 +112,7 @@ data class OrgList(
     val orgIndex: Int,
     val orgPosition: String,
     val orgPosType: String,
+    val orgPersName: String,
     val orgIncidentID: Int
 ) {
     override fun toString(): String {
@@ -125,6 +126,8 @@ data class OrgList(
             append('\'')
             append(", orgPosType=")
             append(orgPosType)
+            append(", orgPersName=")
+            append(orgPersName)
             append(", orgIncidentID=")
             append(orgIncidentID)
             append('}')
@@ -132,7 +135,49 @@ data class OrgList(
     }
 }
 
-data class PersList(
+data class OrgChartList(
+    val orgPosition: String,
+    val orgPersName: String
+) {
+    override fun toString(): String {
+
+        return buildString {
+            append("OrganisationChart{")
+            append(", orgPosition=")
+            append(orgPosition)
+            append('\'')
+            append(", orgPersName=")
+            append(orgPersName)
+            append('}')
+        }
+    }
+}
+
+data class PersMinList(
+    val persIndex: Int,
+    val persName: String,
+    val persPosition: String,
+    val persIncidentID: Int
+) {
+    override fun toString(): String {
+
+        return buildString {
+            append("Organisation{")
+            append("persIndex=")
+            append(persIndex)
+            append(", persName=")
+            append(persName)
+            append('\'')
+            append(", persPosition=")
+            append(persPosition)
+            append(", persIncidentID=")
+            append(persIncidentID)
+            append('}')
+        }
+    }
+}
+
+data class PersFullList(
     val persIndex: Int,
     val persName: String,
     val persTitle: String,

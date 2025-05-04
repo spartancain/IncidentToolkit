@@ -11,17 +11,19 @@ import android.graphics.Bitmap.createBitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.Toast
-import gov.emercom.incidenttoolkit.incident.IncidentBriefingActivity
+import androidx.core.database.getStringOrNull
 import gov.emercom.incidenttoolkit.main.IncidentGetList
 import gov.emercom.incidenttoolkit.main.IncidentPutList
+import gov.emercom.incidenttoolkit.main.OrgChartList
 import gov.emercom.incidenttoolkit.main.OrgList
-import gov.emercom.incidenttoolkit.main.PersList
+import gov.emercom.incidenttoolkit.main.PersFullList
+import gov.emercom.incidenttoolkit.main.PersMinList
 import gov.emercom.incidenttoolkit.main.RadioList
 import gov.emercom.incidenttoolkit.main.TimelineList
 import java.io.ByteArrayOutputStream
 import java.time.Instant
 
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db", null, 5) {
+class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db", null, 6) {
 
     //Incident Table Values
     val INCIDENT_TABLE = "INCIDENT_TABLE"
@@ -124,7 +126,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
             append(" TEXT, ")
             append(COL_ORG_POSTYPE) //COL 2
             append(" TEXT, ")
-            append(COL_ID) //COL 3
+            append(COL_PERS_NAME) //COL 3
+            append(" TEXT, ")
+            append(COL_ID) //COL 4
             append(" INTEGER)")
         }
         db?.execSQL(organisationTableCreator)
@@ -200,12 +204,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        db?.execSQL("DROP TABLE IF EXISTS INCIDENT_TABLE")
-        db?.execSQL("DROP TABLE IF EXISTS ORGANISATION_TABLE")
-        db?.execSQL("DROP TABLE IF EXISTS PERSONS_TABLE")
-        db?.execSQL("DROP TABLE IF EXISTS RADIO_TABLE")
-        db?.execSQL("DROP TABLE IF EXISTS TIMELINE_TABLE")
-        onCreate(db)
+
+        if (oldVersion < 3) {
+//            db?.execSQL("ALTER TABLE ${TODO()} ADD COLUMN ${TODO()} TEXT")
+        } else {
+            db?.execSQL("DROP TABLE IF EXISTS INCIDENT_TABLE")
+            db?.execSQL("DROP TABLE IF EXISTS ORGANISATION_TABLE")
+            db?.execSQL("DROP TABLE IF EXISTS PERSONS_TABLE")
+            db?.execSQL("DROP TABLE IF EXISTS RADIO_TABLE")
+            db?.execSQL("DROP TABLE IF EXISTS TIMELINE_TABLE")
+            onCreate(db)
+        }
     }
 
     //GENERAL ACTIONS
@@ -309,13 +318,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         return incidentArray
     }
 
-    fun updateIncidentMapImage(
-        context: Context,
-        keyColumn: String,
-        keyValue: String,
-        targetColumn: String,
-        targetImage: Bitmap
-    ) {
+    fun updateIncidentMapImage(context: Context, keyColumn: String, keyValue: String, targetColumn: String, targetImage: Bitmap) {
         val db = this.writableDatabase
         val targetArray2 = bitmapToByteArray(targetImage)
         val maxImageBytes = 1000000 //Max cursor size is 1MB
@@ -334,11 +337,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         }
     }
 
-    fun bitmapToByteArray(
-        bitmap: Bitmap,
-        format: CompressFormat = CompressFormat.PNG,
-        quality: Int = 100
-    ): ByteArray {
+    fun bitmapToByteArray(bitmap: Bitmap, format: CompressFormat = CompressFormat.PNG, quality: Int = 100): ByteArray {
         val stream = ByteArrayOutputStream()
         bitmap.compress(format, quality, stream)
         val byteArray = stream.toByteArray()
@@ -378,19 +377,43 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
     }
 
     //ORGANISATION ACTIONS
-    fun insertOrg(orgList: OrgList): Boolean {
+    fun insertOrgPosition(orgList: OrgList): Boolean {
         val db = this.writableDatabase
-        val values = ContentValues().apply {
-            put(COL_ORG_POSITION, orgList.orgPosition)
-            put(COL_ORG_POSTYPE, orgList.orgPosType)
-            put(COL_ID, orgList.orgIncidentID)
+        val orgPosRead = ArrayList<OrgList?>()
+        val queryString = "SELECT * FROM $ORGANISATION_TABLE WHERE $COL_ORG_POSITION = '${orgList.orgPosition}' AND $COL_ID = ${orgList.orgIncidentID}"
+        val cursor = db.rawQuery(queryString, null)
+        if (cursor.moveToFirst()) {
+            updateField(ORGANISATION_TABLE,COL_ORG_POSITION,orgList.orgPosition,COL_PERS_NAME,orgList.orgPersName)
+            cursor.close()
+            return true
+        } else {
+            val values = ContentValues().apply {
+                put(COL_ORG_POSITION, orgList.orgPosition)
+                put(COL_ORG_POSTYPE, orgList.orgPosType)
+                put(COL_PERS_NAME, orgList.orgPersName)
+                put(COL_ID, orgList.orgIncidentID)
+            }
+            val insert = db.insert(ORGANISATION_TABLE, null, values)
+            return insert.toInt() != -1
         }
-        val insert = db.insert(ORGANISATION_TABLE, null, values)
-        return insert.toInt() != -1
         db.close()
     }
 
-    fun getSelectedOrg(keyColumn: String, keyValue: String): ArrayList<OrgList> {
+/*    fun upsertOrg(orgList: OrgList) {
+        val db = this.writableDatabase
+        val columns = "$COL_ORG_POSITION, $COL_ORG_POSTYPE, $COL_PERS_NAME, $COL_ID"
+        val values = "'${orgList.orgPosition}', '${orgList.orgPosType}', '${orgList.orgPersName}', ${orgList.orgIncidentID}"
+        val queryString = """
+            INSERT INTO $ORGANISATION_TABLE ($columns) VALUES ($values)
+            ON CONFLICT ('$COL_ORG_POSITION', $COL_ID) DO UPDATE SET
+            $COL_PERS_NAME = ${orgList.orgPersName}
+            """
+        Log.i("upsertOrg",queryString)
+        db.execSQL(queryString)
+        db.close()
+    }*/
+
+    fun getSelectedOrgFull(keyColumn: String, keyValue: String): ArrayList<OrgList> {
         val db = this.readableDatabase
         val orgArray = ArrayList<OrgList>()
         val queryString = "SELECT * FROM $ORGANISATION_TABLE WHERE $keyColumn = $keyValue"
@@ -402,7 +425,26 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
                         orgIndex = cursor.getInt(0),
                         orgPosition = cursor.getString(1),
                         orgPosType = cursor.getString(2),
-                        orgIncidentID = cursor.getInt(3)
+                        orgPersName = cursor.getString(3),
+                        orgIncidentID = cursor.getInt(4)
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+        return orgArray
+    }
+
+    fun getSelectedOrgForChart(incidentID: Int): ArrayList<OrgChartList> {
+        val db = this.readableDatabase
+        val orgArray = ArrayList<OrgChartList>()
+        val queryString = "SELECT * FROM $ORGANISATION_TABLE WHERE $COL_ID = $incidentID"
+        val cursor = db.rawQuery(queryString, null)
+        if (cursor.moveToFirst()) {
+            do {
+                orgArray.add(
+                    OrgChartList(
+                        orgPosition = cursor.getString(1),
+                        orgPersName = cursor.getString(3)
                     )
                 )
             } while (cursor.moveToNext())
@@ -411,7 +453,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
     }
 
     //PERSONS ACTIONS
-    fun insertPers(persList: PersList): Boolean {
+    fun insertPersonFull(persList: PersFullList): Boolean {
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(COL_PERS_NAME, persList.persName)
@@ -427,22 +469,58 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         db.close()
     }
 
-    fun getSelectedPers(keyColumn: String, keyValue: String): ArrayList<PersList> {
+    fun insertPersonBasic(persList: PersMinList): Boolean {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put(COL_PERS_NAME, persList.persName)
+            put(COL_ORG_POSITION, persList.persPosition)
+            put(COL_ID, persList.persIncidentID)
+        }
+        val queryString = "SELECT * FROM $PERSONS_TABLE WHERE $COL_PERS_NAME = '${persList.persName}' AND $COL_ID = ${persList.persIncidentID}"
+        val cursor = db.rawQuery(queryString,null)
+        if (cursor.moveToFirst()) {
+            val whereClause = "$COL_PERS_NAME = ? AND $COL_ID = ?"
+            val whereArgs = arrayOf<String>(persList.persName,persList.persIncidentID.toString())
+            val update = db.update(PERSONS_TABLE,values,whereClause,whereArgs)
+            val updateResult = update.toInt() != -1
+            cursor.close()
+            return updateResult
+        } else {
+            val insert = db.insert(PERSONS_TABLE, null, values)
+            return insert.toInt() != -1
+        }
+        db.close()
+    }
+
+/*    fun upsertPersFromOrg(persList: PersMinList) {
+        val db = this.writableDatabase
+        val columns = "$COL_PERS_NAME, $COL_ORG_POSITION, $COL_ID"
+        val values = "${persList.persName}, ${persList.persPosition}, ${persList.persIncidentID}"
+        val queryString = """
+            INSERT INTO $PERSONS_TABLE ($columns) VALUES ($values)
+            ON CONFLICT ($COL_PERS_NAME, $COL_ID) DO UPDATE SET
+            $COL_ORG_POSITION = ${persList.persPosition}
+            """
+        db.execSQL(queryString)
+        db.close()
+    }*/
+
+    fun getSelectedPersons(keyColumn: String, keyValue: String): ArrayList<PersFullList> {
         val db = this.readableDatabase
-        val persArray = ArrayList<PersList>()
+        val persArray = ArrayList<PersFullList>()
         val queryString = "SELECT * FROM $PERSONS_TABLE WHERE $keyColumn = $keyValue"
         val cursor = db.rawQuery(queryString, null)
         if (cursor.moveToFirst()) {
             do {
                 persArray.add(
-                    PersList(
+                    PersFullList(
                         persIndex = cursor.getInt(0),
                         persName = cursor.getString(1),
-                        persTitle = cursor.getString(2),
+                        persTitle = cursor.getStringOrNull(2).toString(),
                         persPosition = cursor.getString(3),
-                        persPhone = cursor.getString(4),
-                        persRadChannel = cursor.getString(5),
-                        persCallsign = cursor.getString(6),
+                        persPhone = cursor.getStringOrNull(4).toString(),
+                        persRadChannel = cursor.getStringOrNull(5).toString(),
+                        persCallsign = cursor.getStringOrNull(6).toString(),
                         persIncidentID = cursor.getInt(7)
                     )
                 )
