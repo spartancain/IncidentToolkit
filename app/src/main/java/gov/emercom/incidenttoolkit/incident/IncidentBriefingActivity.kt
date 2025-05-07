@@ -5,10 +5,15 @@ import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TableLayout
+import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -86,6 +91,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_incident_briefing)
+        supportActionBar?.hide()
 
         //Get selected incident ID from MainActivity and produce incident info arrays
         val selectedIncidentID: Int = intent.getIntExtra("selectedIncidentID",-1)
@@ -128,6 +134,8 @@ class IncidentBriefingActivity: AppCompatActivity() {
             return@setOnLongClickListener true
         }
 
+        TODO("Need to implement RecyclerView for Actions Timeline table")
+
         bBriefingSaveRemain.setOnClickListener {
 
             if (etBriefingSituationSummary.text.isNotEmpty()) {
@@ -151,13 +159,39 @@ class IncidentBriefingActivity: AppCompatActivity() {
             }
 
             saveOrgChartFields()
-
             setOrgChartText()
-
+            Toast.makeText(this@IncidentBriefingActivity, "Incident Briefing Saved.", Toast.LENGTH_SHORT).show()
         }
 
-        //Hide the AppCompatActivity top action bar
-        supportActionBar?.hide()
+        bBriefingSaveExit.setOnClickListener {
+
+            if (etBriefingSituationSummary.text.isNotEmpty()) {
+                dbh.updateField(
+                    dbh.INCIDENT_TABLE,
+                    dbh.COL_ID,
+                    incidentID.toString(),
+                    dbh.COL_SITU,
+                    etBriefingSituationSummary.text.toString()
+                )
+            }
+
+            if (etBriefingObjectives.text.isNotEmpty()) {
+                dbh.updateField(
+                    dbh.INCIDENT_TABLE,
+                    dbh.COL_ID,
+                    incidentID.toString(),
+                    dbh.COL_OBJS,
+                    etBriefingObjectives.text.toString()
+                )
+            }
+
+            saveOrgChartFields()
+            setOrgChartText()
+            Toast.makeText(this@IncidentBriefingActivity, "Incident Briefing Saved.", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+
+
     }
 
     fun setIncidentArrayText(arrayList: ArrayList<IncidentGetList>) {
@@ -227,6 +261,14 @@ class IncidentBriefingActivity: AppCompatActivity() {
             Log.i("searchResult","${textView.toString()} search result: ${searchResult.toString()}")
             textView.setText(searchResult.orgPersName)
         }
+    }
+
+
+    fun generateNameSequence(prefix: String, count: Int) : List<String> {
+        return generateSequence(1) { it + 1 }
+            .take(count)
+            .map { "$prefix$it" }
+            .toList()
     }
 
 }

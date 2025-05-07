@@ -23,7 +23,7 @@ import gov.emercom.incidenttoolkit.main.TimelineList
 import java.io.ByteArrayOutputStream
 import java.time.Instant
 
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db", null, 6) {
+class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db", null, 7) {
 
     //Incident Table Values
     val INCIDENT_TABLE = "INCIDENT_TABLE"
@@ -129,7 +129,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
             append(COL_PERS_NAME) //COL 3
             append(" TEXT, ")
             append(COL_ID) //COL 4
-            append(" INTEGER)")
+            append(" INTEGER, ")
+            append("FOREIGN KEY ($COL_ID) REFERENCES $INCIDENT_TABLE($COL_ID)")
+            append(")")
         }
         db?.execSQL(organisationTableCreator)
 
@@ -152,7 +154,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
             append(COL_PERS_CS) //COL 6
             append(" TEXT, ")
             append(COL_ID) //COL 7
-            append(" INTEGER)")
+            append(" INTEGER, ")
+            append("FOREIGN KEY ($COL_ID) REFERENCES $INCIDENT_TABLE($COL_ID)")
+            append(")")
         }
         db?.execSQL(personsTableCreator)
 
@@ -181,7 +185,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
             append(COL_RAD_REMARKS) //COL 9
             append(" TEXT, ")
             append(COL_ID) //COL 10
-            append(" INTEGER)")
+            append(" INTEGER, ")
+            append("FOREIGN KEY ($COL_ID) REFERENCES $INCIDENT_TABLE($COL_ID)")
+            append(")")
         }
         db?.execSQL(radioTableCreator)
 
@@ -198,7 +204,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
             append(COL_TIME_PERIOD_REF) //COL 3
             append(" TEXT, ")
             append(COL_ID) //COL 4
-            append(" INTEGER)")
+            append(" INTEGER, ")
+            append("FOREIGN KEY ($COL_ID) REFERENCES $INCIDENT_TABLE($COL_ID)")
+            append(")")
         }
         db?.execSQL(timelineTableCreator)
     }
