@@ -26,9 +26,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var ptIncidentName: TextView
     private lateinit var acIncidentType: AutoCompleteTextView
     private lateinit var acIncidentLoc: AutoCompleteTextView
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var rvIncidentList: RecyclerView
     lateinit var dbh: DatabaseHelper
-    private lateinit var newArray: ArrayList<IncidentPutList>
+    private lateinit var newIncidentPutArray: ArrayList<IncidentPutList>
     private var selectedIncident: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,16 +42,16 @@ class MainActivity : ComponentActivity() {
         ptIncidentName = findViewById(R.id.ptIncidentName)
         acIncidentType = findViewById(R.id.acIncidentType)
         acIncidentLoc = findViewById(R.id.acIncidentLoc)
-        recyclerView = findViewById(R.id.rvIncidentList)
+        rvIncidentList = findViewById(R.id.rvIncidentList)
 
 
 
         //Recycler definitions
         dbh = DatabaseHelper(this)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.setHasFixedSize(true)
+        rvIncidentList.layoutManager = LinearLayoutManager(this)
+        rvIncidentList.setHasFixedSize(true)
         //initialize newArray for onclicklistener in recyclerview
-        newArray = arrayListOf<IncidentPutList>()
+        newIncidentPutArray = arrayListOf<IncidentPutList>()
 
 
         //Autofill Hints
@@ -199,8 +199,8 @@ class MainActivity : ComponentActivity() {
     //Incident display updater for RecyclerView
 
     fun displayIncident() {
-        val newCursor: Cursor = dbh.getTableContentsDescending("INCIDENT_TABLE", "COLUMN_ID")
-        newArray = ArrayList<IncidentPutList>()
+        val newCursor: Cursor = dbh.getTableContentsDescending(dbh.INCIDENT_TABLE, dbh.COL_ID)
+        newIncidentPutArray = ArrayList<IncidentPutList>()
         while (newCursor.moveToNext()){
             val uIncidentID = newCursor.getInt(0)
             val uIncidentName = newCursor.getString(1)
@@ -209,7 +209,7 @@ class MainActivity : ComponentActivity() {
             val uIncidentStart = newCursor.getLong(4)
             val uIncidentStartDTG = FormatDate(uIncidentStart)
 
-            newArray.add(
+            newIncidentPutArray.add(
                 IncidentPutList(
                 uIncidentID,
                 uIncidentName,
@@ -224,8 +224,8 @@ class MainActivity : ComponentActivity() {
         }
 
         //changed in Foxandroid tutorial
-        val adapter = IncidentsRecyclerAdapter(newArray)
-        recyclerView.adapter = adapter
+        val adapter = IncidentsRecyclerAdapter(newIncidentPutArray)
+        rvIncidentList.adapter = adapter
         adapter.setOnItemClickListener(object: IncidentsRecyclerAdapter.OnItemClickListener {
             override fun onItemClick(position: Int, selectedIncidentID: String) {
 //                Toast.makeText(this@MainActivity,"Clicked on $position",Toast.LENGTH_SHORT).show()

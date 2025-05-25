@@ -227,9 +227,16 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
 
     //GENERAL ACTIONS
     //called by displayIncident@MainActivity for RecyclerView
-    fun getTableContentsDescending(table: String, keyColumn: String): Cursor {
+    fun getTableContentsDescending(table: String, orderColumn: String): Cursor {
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $table ORDER BY $keyColumn DESC", null)
+        val cursor = db.rawQuery("SELECT * FROM $table ORDER BY $orderColumn DESC", null)
+        return cursor
+    }
+
+    //Called by Timeline/actions RecyclerViews
+    fun getMatchingContentsAscending(table: String, keyColumn: String, keyValue: String, orderColumn: String): Cursor {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $table WHERE $keyColumn='$keyValue' ORDER BY $orderColumn ASC", null)
         return cursor
     }
 

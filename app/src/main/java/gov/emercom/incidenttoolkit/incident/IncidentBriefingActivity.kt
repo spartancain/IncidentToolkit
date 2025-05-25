@@ -1,6 +1,7 @@
 package gov.emercom.incidenttoolkit.incident
 
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -21,12 +22,16 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import gov.emercom.incidenttoolkit.DatabaseHelper
 import gov.emercom.incidenttoolkit.R
 import gov.emercom.incidenttoolkit.main.IncidentGetList
 import gov.emercom.incidenttoolkit.main.OrgChartList
 import gov.emercom.incidenttoolkit.main.OrgList
 import gov.emercom.incidenttoolkit.main.PersMinList
+import gov.emercom.incidenttoolkit.main.TimelineList
+import java.sql.Time
 
 class IncidentBriefingActivity: AppCompatActivity() {
 
@@ -48,6 +53,8 @@ class IncidentBriefingActivity: AppCompatActivity() {
     private lateinit var etBriefingOrgFinanceChief: AutoCompleteTextView
     private lateinit var bBriefingSaveRemain: Button
     private lateinit var bBriefingSaveExit: Button
+    private lateinit var rvTimelineList: RecyclerView
+    private lateinit var timelineArray: ArrayList<TimelineList>
 
     val dbh = DatabaseHelper(this@IncidentBriefingActivity)
     val orgChartMap = mutableMapOf<AutoCompleteTextView, String>()
@@ -87,6 +94,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
 
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -114,6 +122,8 @@ class IncidentBriefingActivity: AppCompatActivity() {
         etBriefingOrgFinanceChief = findViewById(R.id.etBriefingOrgFinanceChief)
         bBriefingSaveRemain = findViewById(R.id.bBriefingSaveRemain)
         bBriefingSaveExit = findViewById(R.id.bBriefingSaveExit)
+        rvTimelineList = findViewById(R.id.rvBriefingActions)
+
 
         orgChartMap.put(etBriefingOrgIC, "Incident Commander")
         orgChartMap.put(etBriefingOrgLiaison, "Liaison Officer")
@@ -134,7 +144,12 @@ class IncidentBriefingActivity: AppCompatActivity() {
             return@setOnLongClickListener true
         }
 
-        TODO("Need to implement RecyclerView for Actions Timeline table")
+        //Timeline Recycler onCreate items
+        rvTimelineList.layoutManager = LinearLayoutManager(this)
+        rvTimelineList.setHasFixedSize(true)
+        timelineArray = arrayListOf<TimelineList>()
+
+        displayTimeline()
 
         bBriefingSaveRemain.setOnClickListener {
 
@@ -160,6 +175,9 @@ class IncidentBriefingActivity: AppCompatActivity() {
 
             saveOrgChartFields()
             setOrgChartText()
+
+            saveActions()
+
             Toast.makeText(this@IncidentBriefingActivity, "Incident Briefing Saved.", Toast.LENGTH_SHORT).show()
         }
 
@@ -192,6 +210,42 @@ class IncidentBriefingActivity: AppCompatActivity() {
         }
 
 
+    }
+
+    private fun displayTimeline() {
+        val newCursor: Cursor = dbh.getMatchingContentsAscending(dbh.TIMELINE_TABLE,dbh.COL_ID,incidentID.toString(),dbh.COL_TIME_INDEX)
+        timelineArray = ArrayList<TimelineList>()
+        while (newCursor.moveToNext()){
+            val uTimelineIndex = newCursor.getInt(0)
+            val uTimelineStart = newCursor.getString(1)
+            val uTimelineEnd = newCursor.getString(2)
+            val uTimelineRef = newCursor.getString(3)
+            val uTimelineIncidentID = newCursor.getInt(4)
+
+            timelineArray.add(
+                TimelineList(
+                    uTimelineIndex,
+                    uTimelineStart,
+                    uTimelineEnd,
+                    uTimelineRef,
+                    uTimelineIncidentID
+                )
+            )
+        }
+
+        //Add one to whatever was loaded to create extra action line in initial create. -1 flag allows create of new in dbh
+        timelineArray.add(
+            TimelineList(
+                -1,
+                "",
+                "",
+                "",
+                incidentID
+            )
+        )
+
+        val adapter = IncidentActionsRecyclerAdapter(timelineArray)
+        rvTimelineList.adapter = adapter
     }
 
     fun setIncidentArrayText(arrayList: ArrayList<IncidentGetList>) {
@@ -255,6 +309,10 @@ class IncidentBriefingActivity: AppCompatActivity() {
         }
     }
 
+    fun saveActions(){
+        TODO()
+    }
+
     fun fillOrgChartFromArrayList(arrayList: ArrayList<OrgChartList>, textView: AutoCompleteTextView,orgPos: String) {
         val searchResult = arrayList.firstOrNull { it.orgPosition == orgPos }
         searchResult?.let {
@@ -263,7 +321,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
         }
     }
 
-
+//might need this for actions recycler autogeneration
     fun generateNameSequence(prefix: String, count: Int) : List<String> {
         return generateSequence(1) { it + 1 }
             .take(count)

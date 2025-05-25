@@ -32,10 +32,15 @@ class IncidentActionsRecyclerAdapter (val timelineList: ArrayList<TimelineList>)
         holder: IncidentActionsViewHolder,
         position: Int
     ) {
-        TODO("Not yet implemented")
+        val currentAction = timelineList[position]
+        holder.etActionTime?.setText(currentAction.timePeriodStart)
+        holder.etActionAction?.setText(currentAction.timePeriodRef)
+
+        holder.itemView
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        timelineList.size
+        return timelineList.size
     }
 }
