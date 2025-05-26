@@ -7,7 +7,7 @@ data class IncidentPutList(
     val incidentLoc: String,
     val incidentStart: Long,
     val incidentStartDTG: String,
-    //var incidentEnd: Date
+    var isSelected: Int
 ) {
     override fun toString(): String {
 
@@ -260,9 +260,9 @@ data class RadioList(
 
 data class TimelineList(
     val timeIndex: Int,
-    val timePeriodStart: String,
+    var timePeriodStart: String,
     val timePeriodEnd: String,
-    val timePeriodRef: String,
+    var timePeriodRef: String,
     val timeIncidentID: Int
 ) {
     override fun toString(): String {

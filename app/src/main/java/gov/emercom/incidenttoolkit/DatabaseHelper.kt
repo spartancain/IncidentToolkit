@@ -21,6 +21,7 @@ import gov.emercom.incidenttoolkit.main.PersMinList
 import gov.emercom.incidenttoolkit.main.RadioList
 import gov.emercom.incidenttoolkit.main.TimelineList
 import java.io.ByteArrayOutputStream
+import java.sql.Time
 import java.time.Instant
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db", null, 7) {
@@ -604,6 +605,40 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         val insert = db.insert(TIMELINE_TABLE, null, values)
         return insert.toInt() != -1
         db.close()
+    }
+
+    fun upsertTimeline(context: Context, timelineList: ArrayList<TimelineList>) {
+        val db = this.writableDatabase
+        try {
+            for (data in timelineList) {
+                val values = ContentValues().apply {
+                    put(COL_TIME_PERIOD_START, data.timePeriodStart)
+                    put(COL_TIME_PERIOD_END, data.timePeriodEnd)
+                    put(COL_TIME_PERIOD_REF, data.timePeriodRef)
+                    put(COL_ID, data.timeIncidentID)
+                }
+                if (data.timeIndex < 0) {
+                    if (data.timePeriodStart.length > 3 && data.timePeriodRef.length > 3) {
+                        Log.i("upsertTimeline",values.toString())
+                        val insert = db.insert(TIMELINE_TABLE, null, values)
+                        Log.i("insertTimeline","Added Row $insert to DB")
+                    } else {
+                        Toast.makeText(context,"A timeline value was too short to save: 4 characters minimum.",Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    db.update(
+                        TIMELINE_TABLE,
+                        values,
+                        "$COL_TIME_INDEX = ?",
+                        arrayOf(data.timeIndex.toString())
+                    )
+                }
+            }
+        } catch (e: Exception){
+            e.printStackTrace()
+        } finally {
+            db.close()
+        }
     }
 
     fun getSelectedTimeline(keyColumn: String, keyValue: String): ArrayList<TimelineList> {

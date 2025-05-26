@@ -3,6 +3,7 @@ package gov.emercom.incidenttoolkit.main
 import android.app.AlertDialog
 import android.database.Cursor
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -88,7 +89,8 @@ class MainActivity : ComponentActivity() {
                 incidentType,
                 incidentLoc,
                 incidentStart.toLong(),
-                incidentStartDTG.toString()
+                incidentStartDTG.toString(),
+                -1
             )
 
             if (incidentName.length > 2 && incidentType.length > 2 && incidentLoc.length > 2) {
@@ -99,7 +101,8 @@ class MainActivity : ComponentActivity() {
                         acIncidentType.text.toString(),
                         acIncidentLoc.text.toString(),
                         incidentStart.toLong(),
-                        incidentStartDTG.toString()
+                        incidentStartDTG.toString(),
+                        -1
                     )
                     ptIncidentName.text = ""
                     acIncidentType.setText("")
@@ -120,7 +123,8 @@ class MainActivity : ComponentActivity() {
                         "No Type",
                         "No Loc",
                         -1,
-                        (-1).toString()
+                        (-1).toString(),
+                        -1
                     )
 
 
@@ -216,7 +220,8 @@ class MainActivity : ComponentActivity() {
                 uIncidentType,
                 uIncidentLoc,
                 uIncidentStart,
-                uIncidentStartDTG
+                uIncidentStartDTG,
+                    -1
             )
             )
             //var arrayText = newArray.toString()
@@ -225,7 +230,9 @@ class MainActivity : ComponentActivity() {
 
         //changed in Foxandroid tutorial
         val adapter = IncidentsRecyclerAdapter(newIncidentPutArray)
+        var selectedPosition = RecyclerView.NO_POSITION //for highlighter
         rvIncidentList.adapter = adapter
+
         adapter.setOnItemClickListener(object: IncidentsRecyclerAdapter.OnItemClickListener {
             override fun onItemClick(position: Int, selectedIncidentID: String) {
 //                Toast.makeText(this@MainActivity,"Clicked on $position",Toast.LENGTH_SHORT).show()
@@ -241,10 +248,21 @@ class MainActivity : ComponentActivity() {
                 selectedIncident = selectedIncidentID.toInt()
                 IncidentsRecyclerAdapter.OnSelectedIncident.selectedIncident = selectedIncident
 
+                for (i in 0 until newIncidentPutArray.size) {
+                    if (i != position) {
+                        newIncidentPutArray[i].isSelected = -1
+                    } else {
+                        newIncidentPutArray[i].isSelected = 1
+                        Log.i ("incidentSelector","Selected $i as isSelected ${newIncidentPutArray[i].isSelected}")
+                    }
+                }
+                adapter.notifyDataSetChanged()
+
                 Toast.makeText(this@MainActivity,"Selected Incident $selectedIncidentID",Toast.LENGTH_SHORT).show()
 
             }
         })
+
 
     }
 

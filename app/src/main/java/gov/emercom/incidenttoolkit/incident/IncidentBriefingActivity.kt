@@ -176,7 +176,8 @@ class IncidentBriefingActivity: AppCompatActivity() {
             saveOrgChartFields()
             setOrgChartText()
 
-            saveActions()
+            dbh.upsertTimeline(this@IncidentBriefingActivity, timelineArray)
+            displayTimeline()
 
             Toast.makeText(this@IncidentBriefingActivity, "Incident Briefing Saved.", Toast.LENGTH_SHORT).show()
         }
@@ -205,6 +206,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
 
             saveOrgChartFields()
             setOrgChartText()
+            dbh.upsertTimeline(this@IncidentBriefingActivity, timelineArray)
             Toast.makeText(this@IncidentBriefingActivity, "Incident Briefing Saved.", Toast.LENGTH_SHORT).show()
             finish()
         }
@@ -213,7 +215,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
     }
 
     private fun displayTimeline() {
-        val newCursor: Cursor = dbh.getMatchingContentsAscending(dbh.TIMELINE_TABLE,dbh.COL_ID,incidentID.toString(),dbh.COL_TIME_INDEX)
+        val newCursor: Cursor = dbh.getMatchingContentsAscending(dbh.TIMELINE_TABLE,dbh.COL_ID,incidentID.toString(),dbh.COL_TIME_PERIOD_START)
         timelineArray = ArrayList<TimelineList>()
         while (newCursor.moveToNext()){
             val uTimelineIndex = newCursor.getInt(0)
@@ -246,6 +248,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
 
         val adapter = IncidentActionsRecyclerAdapter(timelineArray)
         rvTimelineList.adapter = adapter
+
     }
 
     fun setIncidentArrayText(arrayList: ArrayList<IncidentGetList>) {
