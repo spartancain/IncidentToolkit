@@ -263,7 +263,8 @@ data class TimelineList(
     var timePeriodStart: String,
     val timePeriodEnd: String,
     var timePeriodRef: String,
-    val timeIncidentID: Int
+    val timeIncidentID: Int,
+    var isSelected: Int
 ) {
     override fun toString(): String {
 

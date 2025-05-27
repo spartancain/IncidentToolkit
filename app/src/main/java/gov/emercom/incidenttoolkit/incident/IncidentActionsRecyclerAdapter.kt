@@ -11,18 +11,49 @@ import androidx.recyclerview.widget.RecyclerView
 import gov.emercom.incidenttoolkit.DatabaseHelper
 import gov.emercom.incidenttoolkit.main.TimelineList
 import gov.emercom.incidenttoolkit.R
+import gov.emercom.incidenttoolkit.main.IncidentsRecyclerAdapter
 
 class IncidentActionsRecyclerAdapter(val timelineList: ArrayList<TimelineList>) :
     RecyclerView.Adapter<IncidentActionsRecyclerAdapter.IncidentActionsViewHolder>() {
 
+    //Long click handling
+    private lateinit var longClickListener: OnItemLongClickListener
+
+    interface OnItemLongClickListener {
+        fun onItemLongClick(position: Int)
+    }
+    fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
+        longClickListener = listener
+    }
+
+    //Selection handling
+    private var selectedPosition: Int = -1
+
+    interface OnSelectedPosition {
+        fun onSelectedPosition(position: Int)
+
+        companion object {
+            var selectedPosition: Int = -1
+        }
+    }
 
 
     class IncidentActionsViewHolder(
-        itemView: View
+        itemView: View,
+        longClickListener: OnItemLongClickListener
     ) : RecyclerView.ViewHolder(itemView) {
         val etActionTime: AutoCompleteTextView? = itemView.findViewById(R.id.etActionTime)
         val etActionAction: AutoCompleteTextView? = itemView.findViewById(R.id.etActionAction)
 
+        init {
+            itemView.setOnLongClickListener {
+                longClickListener.onItemLongClick(
+                    absoluteAdapterPosition
+                )
+
+                return@setOnLongClickListener true
+            }
+        }
 
     }
 
@@ -33,7 +64,7 @@ class IncidentActionsRecyclerAdapter(val timelineList: ArrayList<TimelineList>) 
     ): IncidentActionsViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.incident_briefing_actions_cardview, parent, false)
-        return IncidentActionsViewHolder(itemView)
+        return IncidentActionsViewHolder(itemView, longClickListener)
     }
 
     override fun onBindViewHolder(
@@ -73,6 +104,14 @@ class IncidentActionsRecyclerAdapter(val timelineList: ArrayList<TimelineList>) 
         })
 
         holder.itemView
+
+        selectedPosition = holder.absoluteAdapterPosition
+
+        if (timelineList[position].isSelected == 1) {
+            holder.itemView.setBackgroundResource(R.color.obj_blue_selected)
+        } else {
+            holder.itemView.setBackgroundResource(0)
+        }
     }
 
     override fun getItemCount(): Int {

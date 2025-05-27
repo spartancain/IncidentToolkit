@@ -21,7 +21,6 @@ import gov.emercom.incidenttoolkit.main.PersMinList
 import gov.emercom.incidenttoolkit.main.RadioList
 import gov.emercom.incidenttoolkit.main.TimelineList
 import java.io.ByteArrayOutputStream
-import java.sql.Time
 import java.time.Instant
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db", null, 7) {
@@ -607,7 +606,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         db.close()
     }
 
-    fun upsertTimeline(context: Context, timelineList: ArrayList<TimelineList>) {
+    fun upserleteTimeline(context: Context, timelineList: ArrayList<TimelineList>) {
         val db = this.writableDatabase
         try {
             for (data in timelineList) {
@@ -617,6 +616,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
                     put(COL_TIME_PERIOD_REF, data.timePeriodRef)
                     put(COL_ID, data.timeIncidentID)
                 }
+                //If timeindex doesn't exist yet do insert if long enough
                 if (data.timeIndex < 0) {
                     if (data.timePeriodStart.length > 3 && data.timePeriodRef.length > 3) {
                         Log.i("upsertTimeline",values.toString())
@@ -626,12 +626,22 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
                         Toast.makeText(context,"A timeline value was too short to save: 4 characters minimum.",Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    db.update(
-                        TIMELINE_TABLE,
-                        values,
-                        "$COL_TIME_INDEX = ?",
-                        arrayOf(data.timeIndex.toString())
-                    )
+                    //If start and contents are empty delete entry
+                    if (data.timePeriodStart.isEmpty() && data.timePeriodRef.isEmpty()) {
+                        db.delete(
+                            TIMELINE_TABLE,
+                            "$COL_TIME_INDEX = ?",
+                            arrayOf(data.timeIndex.toString())
+                        )
+                    } else {
+                        //If otherwise do update entry
+                        db.update(
+                            TIMELINE_TABLE,
+                            values,
+                            "$COL_TIME_INDEX = ?",
+                            arrayOf(data.timeIndex.toString())
+                        )
+                    }
                 }
             }
         } catch (e: Exception){
@@ -654,7 +664,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
                         timePeriodStart = cursor.getString(1),
                         timePeriodEnd = cursor.getString(2),
                         timePeriodRef = cursor.getString(3),
-                        timeIncidentID = cursor.getInt(4)
+                        timeIncidentID = cursor.getInt(4),
+                        -1
                     )
                 )
             } while (cursor.moveToNext())

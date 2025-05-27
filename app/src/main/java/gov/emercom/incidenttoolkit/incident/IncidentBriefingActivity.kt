@@ -1,20 +1,17 @@
 package gov.emercom.incidenttoolkit.incident
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.database.Cursor
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.ViewGroup
+import android.view.MotionEvent
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.TableLayout
-import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -31,7 +28,6 @@ import gov.emercom.incidenttoolkit.main.OrgChartList
 import gov.emercom.incidenttoolkit.main.OrgList
 import gov.emercom.incidenttoolkit.main.PersMinList
 import gov.emercom.incidenttoolkit.main.TimelineList
-import java.sql.Time
 
 class IncidentBriefingActivity: AppCompatActivity() {
 
@@ -95,6 +91,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
 
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -137,11 +134,27 @@ class IncidentBriefingActivity: AppCompatActivity() {
         setIncidentArrayText(incidentRow)
         setOrgChartText()
 
+
         ivIncidentMapImage.setOnLongClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             pickImageLauncher.launch(intent)
             return@setOnLongClickListener true
+        }
+
+        ivIncidentMapImage.setOnTouchListener { v, event ->
+            val parent = v.parent
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    parent.requestDisallowInterceptTouchEvent(true)
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    parent.requestDisallowInterceptTouchEvent(false)
+                    true
+                }
+                else -> false
+            }
         }
 
         //Timeline Recycler onCreate items
@@ -176,7 +189,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
             saveOrgChartFields()
             setOrgChartText()
 
-            dbh.upsertTimeline(this@IncidentBriefingActivity, timelineArray)
+            dbh.upserleteTimeline(this@IncidentBriefingActivity, timelineArray)
             displayTimeline()
 
             Toast.makeText(this@IncidentBriefingActivity, "Incident Briefing Saved.", Toast.LENGTH_SHORT).show()
@@ -206,7 +219,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
 
             saveOrgChartFields()
             setOrgChartText()
-            dbh.upsertTimeline(this@IncidentBriefingActivity, timelineArray)
+            dbh.upserleteTimeline(this@IncidentBriefingActivity, timelineArray)
             Toast.makeText(this@IncidentBriefingActivity, "Incident Briefing Saved.", Toast.LENGTH_SHORT).show()
             finish()
         }
@@ -230,7 +243,8 @@ class IncidentBriefingActivity: AppCompatActivity() {
                     uTimelineStart,
                     uTimelineEnd,
                     uTimelineRef,
-                    uTimelineIncidentID
+                    uTimelineIncidentID,
+                    -1
                 )
             )
         }
@@ -242,12 +256,27 @@ class IncidentBriefingActivity: AppCompatActivity() {
                 "",
                 "",
                 "",
-                incidentID
+                incidentID,
+                -1
             )
         )
 
         val adapter = IncidentActionsRecyclerAdapter(timelineArray)
         rvTimelineList.adapter = adapter
+
+        adapter.setOnItemLongClickListener(object: IncidentActionsRecyclerAdapter.OnItemLongClickListener {
+            override fun onItemLongClick(position: Int) {
+
+                for (i in 0 until timelineArray.size) {
+                    if (i != position) {
+                        timelineArray[i].isSelected = -1
+                    } else {
+                        timelineArray[i].isSelected = 1
+                        Log.i ("ActionLongClick","Selected Position $i as isSelected ${timelineArray[i].isSelected}")
+                    }
+                }
+            }
+        })
 
     }
 
@@ -312,9 +341,6 @@ class IncidentBriefingActivity: AppCompatActivity() {
         }
     }
 
-    fun saveActions(){
-        TODO()
-    }
 
     fun fillOrgChartFromArrayList(arrayList: ArrayList<OrgChartList>, textView: AutoCompleteTextView,orgPos: String) {
         val searchResult = arrayList.firstOrNull { it.orgPosition == orgPos }
@@ -322,14 +348,6 @@ class IncidentBriefingActivity: AppCompatActivity() {
             Log.i("searchResult","${textView.toString()} search result: ${searchResult.toString()}")
             textView.setText(searchResult.orgPersName)
         }
-    }
-
-//might need this for actions recycler autogeneration
-    fun generateNameSequence(prefix: String, count: Int) : List<String> {
-        return generateSequence(1) { it + 1 }
-            .take(count)
-            .map { "$prefix$it" }
-            .toList()
     }
 
 }
