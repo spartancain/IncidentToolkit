@@ -41,6 +41,15 @@
             android:finishOnTaskLaunch="true"
             >
         </activity>
+        <activity
+            android:name=".incident.IncidentObjectivesActivity"
+            android:parentActivityName=".incident.IncidentActivity"
+            android:exported="false"
+            android:label="Incident Objectives (ICS 202)"
+            android:theme="@style/Theme.AppCompat"
+            android:finishOnTaskLaunch="true"
+            >
+        </activity>
     </application>
 
 </manifest>

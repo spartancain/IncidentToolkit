@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp">
+
+
+        <TextView
+            android:id="@+id/tvIncidentObjectivesTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
+            android:paddingStart="10dp"
+            android:text="Incident Objectives"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tIncidentID4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="11"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvIncidentObjectivesTitle" />
+
+        <TextView
+            android:id="@+id/tIncidentName4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingStart="10dp"
+            android:text="IncidentName4"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentObjectivesTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvIncidentObjectivesTitle" />
+
+        <TextView
+            android:id="@+id/tIncidentStart4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:text="23MAR25 1100:21z"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tIncidentName4"
+            app:layout_constraintTop_toBottomOf="@+id/tIncidentName4" />
+
+        <TextView
+            android:id="@+id/tvObjectivesObectivesTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingStart="10dp"
+            android:text="Current and Planned Objectives:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentObjectivesTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tIncidentStart4" />
+
+        <AutoCompleteTextView
+            android:id="@+id/etObjectivesObjectives"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:ems="100"
+            android:gravity="start|top"
+            android:hint="Insert Current and Planned Objectives"
+            android:inputType="textMultiLine"
+            android:textSize="16dp"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentObjectivesTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvObjectivesObectivesTitle" />
+
+        <TextView
+            android:id="@+id/tvObjectivesEmphasisTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingStart="10dp"
+            android:text="Operational Period Command Emphasis:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentObjectivesTitle"
+            app:layout_constraintTop_toBottomOf="@+id/etObjectivesObjectives" />
+
+        <AutoCompleteTextView
+            android:id="@+id/etObjectivesEmphasis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:ems="100"
+            android:gravity="start|top"
+            android:hint="Explain Commander's Intent/Emphasis"
+            android:inputType="textMultiLine"
+            android:textSize="16dp"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentObjectivesTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvObjectivesEmphasisTitle" />
+
+        <TextView
+            android:id="@+id/tvObjectivesSATitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="Situational Awareness Information:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentObjectivesTitle"
+            app:layout_constraintTop_toBottomOf="@+id/etObjectivesEmphasis" />
+
+        <AutoCompleteTextView
+            android:id="@+id/etObjectivesSA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:ems="100"
+            android:gravity="start|top"
+            android:hint="Insert Relevant Information for Situational Awareness"
+            android:inputType="textMultiLine"
+            android:textSize="16dp"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentObjectivesTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvObjectivesSATitle" />
+
+
+        <TextView
+            android:id="@+id/tvObjectivesSafetyTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:text="Site Safety Plan:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentObjectivesTitle"
+            app:layout_constraintTop_toBottomOf="@+id/etObjectivesSA" />
+
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swObjectivesSafetyRequired"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:text="Plan Required"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentObjectivesTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvObjectivesSafetyTitle" />
+
+        <AutoCompleteTextView
+            android:id="@+id/etObjectivesSafetyLoc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:ems="100"
+            android:gravity="start|top"
+            android:hint="Location of Safety Plan"
+            android:inputType="textMultiLine"
+            android:textSize="16dp"
+            app:layout_constraintStart_toStartOf="@+id/tvIncidentObjectivesTitle"
+            app:layout_constraintTop_toBottomOf="@+id/swObjectivesSafetyRequired" />
+
+        <Button
+            android:id="@+id/bObjectivesSaveRemain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingHorizontal="15dp"
+            android:text="Save And Remain Here"
+            app:layout_constraintEnd_toStartOf="@id/bObjectivesSaveExit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etObjectivesSafetyLoc" />
+
+        <Button
+            android:id="@+id/bObjectivesSaveExit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingHorizontal="15dp"
+            android:text="Save And Exit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/bObjectivesSaveRemain"
+            app:layout_constraintTop_toBottomOf="@+id/etObjectivesSafetyLoc" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="700dp" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="404dp"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="1dp"
+            tools:layout_editor_absoluteY="570dp" />
+
+        <Spinner
+            android:id="@+id/spinner2"
+            android:layout_width="404dp"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="1dp"
+            tools:layout_editor_absoluteY="528dp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

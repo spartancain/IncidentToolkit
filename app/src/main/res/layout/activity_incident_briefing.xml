@@ -25,17 +25,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/ivCloseBriefing"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginEnd="5dp"
-            android:clickable="true"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            app:layout_constraintBottom_toBottomOf="@+id/tIncidentID3"
-            app:layout_constraintEnd_toStartOf="@+id/tIncidentID3"
-            app:layout_constraintTop_toTopOf="@+id/tIncidentID3" />
-
         <TextView
             android:id="@+id/tIncidentID3"
             android:layout_width="wrap_content"
@@ -193,20 +182,33 @@
             android:foregroundGravity="center_vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvBriefingActionsTitle" />
+            app:layout_constraintTop_toBottomOf="@id/tvBriefingActionsTitle" >
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <Button
+            android:id="@+id/bAddActionRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Add Action Row"
+            app:layout_constraintEnd_toEndOf="@+id/rvBriefingActions"
+            app:layout_constraintHeight_max="40dp"
+            app:layout_constraintStart_toStartOf="@+id/rvBriefingActions"
+            app:layout_constraintTop_toBottomOf="@+id/rvBriefingActions" />
 
         <TextView
             android:id="@+id/tvBriefingOrganisation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:text="Current Organisation:"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/tvIncidentBriefingTitle"
-            app:layout_constraintTop_toBottomOf="@+id/rvBriefingActions" />
+            app:layout_constraintTop_toBottomOf="@+id/bAddActionRow" />
 
         <HorizontalScrollView
             android:id="@+id/hsvBriefingOrgWrapper"

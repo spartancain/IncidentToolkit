@@ -271,6 +271,22 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
         db.close()
     }
 
+    fun updateSwitchState(
+        table: String,
+        keyColumn: String,
+        keyValue: String,
+        targetColumn: String,
+        targetValue: Boolean
+    ) {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put(targetColumn, if (targetValue) 1 else 0)
+        }
+        db.update(table, values, "$keyColumn = ?", arrayOf(keyValue))
+        db.close()
+        return
+    }
+
 
     fun deleteRecord(table: String, keyColumn: String, keyValue: Int): Boolean {
         //find model in DB, if found delete and return true. If not found, return false.
@@ -619,12 +635,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "incident.db"
                 //If timeindex doesn't exist yet do insert if long enough
                 if (data.timeIndex < 0) {
                     if (data.timePeriodStart.length > 3 && data.timePeriodRef.length > 3) {
-                        Log.i("upsertTimeline",values.toString())
-                        val insert = db.insert(TIMELINE_TABLE, null, values)
-                        Log.i("insertTimeline","Added Row $insert to DB")
-                    } else {
-                        Toast.makeText(context,"A timeline value was too short to save: 4 characters minimum.",Toast.LENGTH_SHORT).show()
-                    }
+                        db.insert(TIMELINE_TABLE, null, values)
+                    } else {return}
                 } else {
                     //If start and contents are empty delete entry
                     if (data.timePeriodStart.isEmpty() && data.timePeriodRef.isEmpty()) {

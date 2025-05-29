@@ -152,7 +152,7 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
 
         val buttonList = listOf(
             IncidentButton("IncidentBriefingActivity","Incident Briefing\n(ICS 201)"),
-            IncidentButton("Objectives","Incident Objectives\n(ICS 202)"),
+            IncidentButton("IncidentObjectivesActivity","Incident Objectives\n(ICS 202)"),
             IncidentButton("OrgList","Organization Assignment List\n(ICS 203)"),
             IncidentButton("AssignmentList","Assignment List\n(ICS 204)"),
             IncidentButton("RadioPlan","Radio Communications Plan\n(ICS 205)"),
@@ -180,8 +180,9 @@ class IncidentActivity : AppCompatActivity(), DialogListener {
             override fun onItemClick(position: Int, selectedActivity: String) {
                 lateinit var intent: Intent
                 try {
-                    when (position) {
+                    when (position) { //List your target intent activities here!
                         0 -> {intent = Intent(this@IncidentActivity, IncidentBriefingActivity::class.java)}
+                        1 -> {intent = Intent(this@IncidentActivity, IncidentObjectivesActivity::class.java)}
                         else -> {intent = Intent(this@IncidentActivity, selectedActivity::class.java)}
                     }
                     intent.putExtra("selectedIncidentID", activityIncidentID)

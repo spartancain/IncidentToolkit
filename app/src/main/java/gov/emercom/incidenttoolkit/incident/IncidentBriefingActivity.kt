@@ -34,7 +34,6 @@ class IncidentBriefingActivity: AppCompatActivity() {
     private var incidentID: Int = -1
     private lateinit var tIncidentName3: TextView
     private lateinit var tIncidentID3: TextView
-    private lateinit var ivCloseBriefing: ImageView
     private lateinit var tIncidentStart3: TextView
     private lateinit var ivIncidentMapImage: ImageView
     private lateinit var etBriefingSituationSummary: AutoCompleteTextView
@@ -50,6 +49,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
     private lateinit var bBriefingSaveRemain: Button
     private lateinit var bBriefingSaveExit: Button
     private lateinit var rvTimelineList: RecyclerView
+    private lateinit var bAddActionRow: Button
     private lateinit var timelineArray: ArrayList<TimelineList>
 
     val dbh = DatabaseHelper(this@IncidentBriefingActivity)
@@ -99,13 +99,12 @@ class IncidentBriefingActivity: AppCompatActivity() {
         supportActionBar?.hide()
 
         //Get selected incident ID from MainActivity and produce incident info arrays
-        val selectedIncidentID: Int = intent.getIntExtra("selectedIncidentID",-1)
-        val incidentRow = dbh.getSelectedIncident(selectedIncidentID)
+        incidentID = intent.getIntExtra("selectedIncidentID",-1)
+        val incidentRow = dbh.getSelectedIncident(incidentID)
 
         tIncidentName3 = findViewById(R.id.tIncidentName3)
         tIncidentID3 = findViewById(R.id.tIncidentID3)
         tIncidentStart3 = findViewById(R.id.tIncidentStart3)
-        ivCloseBriefing = findViewById(R.id.ivCloseBriefing)
         ivIncidentMapImage = findViewById(R.id.ivIncidentMapImage)
         etBriefingSituationSummary = findViewById(R.id.etBriefingSituationSummary)
         etBriefingObjectives = findViewById(R.id.etBriefingObjectives)
@@ -120,6 +119,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
         bBriefingSaveRemain = findViewById(R.id.bBriefingSaveRemain)
         bBriefingSaveExit = findViewById(R.id.bBriefingSaveExit)
         rvTimelineList = findViewById(R.id.rvBriefingActions)
+        bAddActionRow = findViewById(R.id.bAddActionRow)
 
 
         orgChartMap.put(etBriefingOrgIC, "Incident Commander")
@@ -163,6 +163,21 @@ class IncidentBriefingActivity: AppCompatActivity() {
         timelineArray = arrayListOf<TimelineList>()
 
         displayTimeline()
+
+        bAddActionRow.setOnClickListener {
+            timelineArray.add(
+                TimelineList(
+                    -1,
+                    "",
+                    "",
+                    "",
+                    incidentID,
+                    -1
+                )
+            )
+            val adapter = IncidentActionsRecyclerAdapter(timelineArray)
+            rvTimelineList.adapter = adapter
+        }
 
         bBriefingSaveRemain.setOnClickListener {
 
@@ -264,7 +279,7 @@ class IncidentBriefingActivity: AppCompatActivity() {
         val adapter = IncidentActionsRecyclerAdapter(timelineArray)
         rvTimelineList.adapter = adapter
 
-        adapter.setOnItemLongClickListener(object: IncidentActionsRecyclerAdapter.OnItemLongClickListener {
+/*        adapter.setOnItemLongClickListener(object: IncidentActionsRecyclerAdapter.OnItemLongClickListener {
             override fun onItemLongClick(position: Int) {
 
                 for (i in 0 until timelineArray.size) {
@@ -276,14 +291,13 @@ class IncidentBriefingActivity: AppCompatActivity() {
                     }
                 }
             }
-        })
+        })*/
 
     }
 
     fun setIncidentArrayText(arrayList: ArrayList<IncidentGetList>) {
         if (arrayList.isNotEmpty()) {
             val array = arrayList[0]
-            incidentID = array.incidentID
             val incidentName = array.incidentName
             val incidentStart = array.incidentStartDTG
             val incidentMapByteArray: ByteArray? = array.incidentMapImage
